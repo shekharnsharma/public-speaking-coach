@@ -1,0 +1,3620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Speaking Coach">
+  <meta name="theme-color" content="#0F2F59">
+  <meta name="description" content="A practical public speaking coach for AFE start-ups, with a hands-free Drive Mode and event announcements.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <title>Public Speaking Coach</title>
+  <style>
+    :root {
+      --bg: #F6F1E8;
+      --ink: #152033;
+      --muted: #5C6573;
+      --navy: #0F2F59;
+      --navy-2: #1A4A86;
+      --gold: #C8962E;
+      --red: #C4392D;
+      --green: #1F7A4D;
+      --ok: #2C6BAA;
+      --card: #FFFFFF;
+      --line: #E6DFD2;
+      --shadow: 0 10px 28px rgba(21, 32, 51, 0.08);
+      --safe-t: env(safe-area-inset-top, 0px);
+      --safe-b: env(safe-area-inset-bottom, 0px);
+      --safe-l: env(safe-area-inset-left, 0px);
+      --safe-r: env(safe-area-inset-right, 0px);
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Hiragino Sans", system-ui, sans-serif;
+    }
+    body {
+      padding: calc(12px + var(--safe-t)) calc(16px + var(--safe-r)) calc(20px + var(--safe-b)) calc(16px + var(--safe-l));
+    }
+    button, input, textarea { font: inherit; }
+    button {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      border-radius: 18px;
+      transition: transform 0.08s ease, filter 0.15s ease, background 0.15s ease;
+    }
+    button:active { transform: scale(0.98); }
+    button:disabled { opacity: 0.45; cursor: default; transform: none; }
+    .wrap { max-width: 430px; margin: 0 auto; }
+    .en {
+      display: block;
+      font-size: 0.72em;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .banner {
+      background: var(--navy);
+      color: #fff;
+      border-radius: 18px;
+      padding: 14px 14px 14px 16px;
+      margin-bottom: 14px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      box-shadow: var(--shadow);
+    }
+    .banner p { margin: 0; font-size: 17px; line-height: 1.4; font-weight: 650; }
+    .banner .en { color: rgba(255,255,255,0.75); font-weight: 400; font-size: 13px; margin-top: 4px; }
+    .banner .x {
+      flex: 0 0 auto;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      font-size: 22px;
+      line-height: 1;
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .ghost {
+      background: #fff;
+      color: var(--navy);
+      border: 2px solid var(--line);
+      min-height: 52px;
+      padding: 0 16px;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: none;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 8px 0 18px;
+    }
+    .brand img {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.25;
+      color: var(--navy);
+      font-weight: 800;
+    }
+    .lead {
+      font-size: 20px;
+      line-height: 1.45;
+      margin: 0 0 22px;
+      font-weight: 650;
+    }
+    .lead .en { font-weight: 400; font-size: 15px; margin-top: 4px; }
+    .start {
+      width: 100%;
+      min-height: 96px;
+      background: var(--red);
+      color: #fff;
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      box-shadow: 0 12px 24px rgba(196, 57, 45, 0.28);
+      margin-bottom: 16px;
+    }
+    .start .en { color: rgba(255,255,255,0.85); font-size: 16px; font-weight: 600; }
+    .start:active { filter: brightness(0.95); }
+    .start.navy {
+      background: var(--navy);
+      box-shadow: 0 12px 24px rgba(15, 47, 89, 0.28);
+    }
+    .progress-card, .card {
+      background: var(--card);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+    .progress-label { font-size: 18px; font-weight: 750; margin: 0 0 10px; }
+    .bar {
+      height: 12px;
+      background: #EEE8DC;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .bar > i {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--navy), var(--navy-2));
+      border-radius: 99px;
+      width: 0;
+    }
+    .stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin: 14px 0 8px;
+    }
+    .stat {
+      text-align: center;
+      background: #F7F3EB;
+      border-radius: 14px;
+      padding: 10px 4px;
+    }
+    .stat b { display: block; font-size: 22px; color: var(--navy); font-weight: 800; }
+    .stat span { font-size: 12px; color: var(--muted); font-weight: 650; }
+    h2 { font-size: 22px; margin: 8px 0 12px; color: var(--navy); }
+    .lesson-btn {
+      width: 100%;
+      text-align: left;
+      background: var(--card);
+      border: 2px solid var(--line);
+      border-radius: 18px;
+      padding: 16px 16px;
+      margin-bottom: 10px;
+      min-height: 74px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .lesson-btn strong { display: block; font-size: 20px; font-weight: 800; }
+    .lesson-btn .meta { font-size: 15px; color: var(--muted); margin-top: 2px; }
+    .check {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: #E8F4EC; color: var(--green);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; flex: 0 0 auto; font-size: 18px;
+    }
+    .check.empty { background: #F1EEE7; color: #B3AB9E; }
+    .step-kicker {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 750;
+      color: var(--navy);
+      margin: 0 0 8px;
+    }
+    .phrase, .lesson-body {
+      background: var(--card);
+      border-radius: 24px;
+      padding: 22px 18px;
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+    }
+    .lesson-body p {
+      font-size: 19px;
+      line-height: 1.5;
+      font-weight: 600;
+      margin: 0 0 14px;
+    }
+    .lesson-body p:last-child { margin-bottom: 0; }
+    .lesson-body .en {
+      font-weight: 400;
+      font-size: 15px;
+      line-height: 1.45;
+      margin-top: 6px;
+    }
+    .instr {
+      text-align: center;
+      font-size: 22px;
+      font-weight: 800;
+      margin: 4px 0 16px;
+      line-height: 1.35;
+    }
+    .btn {
+      width: 100%;
+      min-height: 72px;
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+    .btn .en { color: rgba(255,255,255,0.85); font-size: 14px; font-weight: 600; }
+    .btn-navy { background: var(--navy); }
+    .btn-red { background: var(--red); box-shadow: 0 10px 20px rgba(196,57,45,0.22); }
+    .btn-green { background: var(--green); }
+    .btn-ok { background: var(--ok); }
+    .btn-gold { background: var(--gold); color: #1A1406; }
+    .btn-gold .en { color: rgba(26,20,6,0.7); }
+    .btn.rec-on {
+      background: #9B1C1C;
+      animation: pulse 1.1s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      50% { filter: brightness(1.12); }
+    }
+    .row-2, .row-3 {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .row-2 { grid-template-columns: 1fr 1fr; }
+    .row-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .row-2 .btn, .row-3 .btn { min-height: 80px; font-size: 20px; margin: 0; }
+    .row-3 .btn { font-size: 18px; padding: 8px 6px; }
+    .status {
+      text-align: center;
+      min-height: 24px;
+      font-size: 16px;
+      color: var(--muted);
+      font-weight: 650;
+      margin: 0 0 10px;
+    }
+    .error { color: var(--red); font-weight: 750; text-align: center; font-size: 17px; margin: 0 0 12px; }
+    .next {
+      width: 100%;
+      min-height: 76px;
+      background: var(--navy);
+      color: #fff;
+      font-size: 26px;
+      font-weight: 800;
+      margin-top: 6px;
+    }
+    .next .en { color: rgba(255,255,255,0.85); font-size: 15px; }
+    .tiny {
+      text-align: center;
+      color: var(--muted);
+      font-size: 15px;
+      margin-top: 18px;
+    }
+    .done-card { text-align: center; padding: 28px 18px; }
+    .done-card h2 { font-size: 28px; margin-bottom: 8px; }
+    .hidden { display: none !important; }
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .badge {
+      background: #F3E6C4;
+      color: #5A3E0B;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 750;
+    }
+    .badge.off { background: #EEE8DC; color: #9A9488; }
+    .chart-wrap { margin-top: 12px; }
+    .chart-wrap svg { width: 100%; height: 120px; display: block; }
+    .chart-legend {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 650;
+      margin-top: 4px;
+    }
+    .dot-navy, .dot-gold {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-right: 4px;
+    }
+    .dot-navy { background: var(--navy); }
+    .dot-gold { background: var(--gold); }
+    .timer {
+      text-align: center;
+      font-size: 84px;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--navy);
+      margin: 8px 0 10px;
+      font-variant-numeric: tabular-nums;
+    }
+    .timer.hot { color: var(--red); }
+    .prompt-card {
+      background: var(--card);
+      border-radius: 24px;
+      padding: 22px 16px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+    }
+    .prompt-card .kicker {
+      font-size: 15px;
+      font-weight: 750;
+      color: var(--gold);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin: 0 0 8px;
+    }
+    .prompt-card .text {
+      font-size: 24px;
+      line-height: 1.35;
+      font-weight: 800;
+    }
+    .prompt-card .hint {
+      margin: 12px 0 0;
+      font-size: 17px;
+      line-height: 1.4;
+      color: var(--navy-2);
+      font-weight: 650;
+    }
+    .chip-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .chip {
+      flex: 1;
+      min-height: 56px;
+      background: #fff;
+      color: var(--navy);
+      border: 2px solid var(--line);
+      font-size: 20px;
+      font-weight: 800;
+    }
+    .chip.on {
+      background: var(--navy);
+      color: #fff;
+      border-color: var(--navy);
+    }
+    .transcript {
+      background: #F7F3EB;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-size: 16px;
+      line-height: 1.4;
+      min-height: 52px;
+      margin: 0 0 12px;
+      color: var(--ink);
+    }
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .stat-grid .stat { padding: 12px 8px; }
+    .stat-grid .stat b { font-size: 26px; }
+    .check-item {
+      width: 100%;
+      text-align: left;
+      background: var(--card);
+      border: 2px solid var(--line);
+      border-radius: 18px;
+      padding: 14px 14px;
+      margin-bottom: 8px;
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .check-item.on { border-color: var(--green); background: #F1F8F4; }
+    .check-item strong { display: block; font-size: 18px; font-weight: 800; }
+    .conf-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 8px 0 16px; }
+    .conf {
+      min-height: 64px;
+      background: #fff;
+      border: 2px solid var(--line);
+      color: var(--navy);
+      font-size: 24px;
+      font-weight: 800;
+    }
+    .conf.on { background: var(--navy); color: #fff; border-color: var(--navy); }
+    textarea.script {
+      width: 100%;
+      min-height: 180px;
+      border: 2px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      font-size: 18px;
+      line-height: 1.45;
+      resize: vertical;
+      background: #fff;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+    .prompter {
+      background: #0B1220;
+      color: #F6F1E8;
+      border-radius: 22px;
+      height: 280px;
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+    }
+    .prompter .track {
+      padding: 120px 18px;
+      transition: none;
+    }
+    .prompter p {
+      margin: 0 0 18px;
+      font-size: 28px;
+      line-height: 1.4;
+      font-weight: 750;
+      color: rgba(246,241,232,0.4);
+    }
+    .prompter p.on { color: #fff; }
+    .speed-row {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .speed-row .lbl { text-align: center; font-weight: 750; font-size: 16px; color: var(--navy); }
+    .breathe-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 280px;
+      margin-bottom: 12px;
+    }
+    .breathe-box {
+      width: 180px;
+      height: 180px;
+      border-radius: 28px;
+      border: 6px solid var(--navy);
+      background: rgba(15, 47, 89, 0.08);
+      transform: scale(0.65);
+      transition: transform 4s linear, background 0.3s ease;
+    }
+    .breathe-box.in { transform: scale(1); background: rgba(15, 47, 89, 0.18); }
+    .breathe-box.hold-in { transform: scale(1); }
+    .breathe-box.out { transform: scale(0.65); background: rgba(15, 47, 89, 0.06); }
+    .breathe-box.hold-out { transform: scale(0.65); }
+    .breathe-label {
+      margin-top: 22px;
+      text-align: center;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--navy);
+    }
+    .breathe-count {
+      font-size: 48px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-top: 4px;
+    }
+    .warn {
+      background: #F8E8E6;
+      border-radius: 22px;
+      padding: 20px 16px;
+      margin-bottom: 16px;
+    }
+    .warn p { margin: 0; font-size: 20px; line-height: 1.45; font-weight: 700; }
+    .warn .en { font-weight: 400; font-size: 16px; margin-top: 8px; }
+
+    /* Drive Mode */
+    body.drive-on {
+      background: #0B1220;
+      color: #F6F1E8;
+      padding: calc(8px + var(--safe-t)) calc(12px + var(--safe-r)) calc(12px + var(--safe-b)) calc(12px + var(--safe-l));
+    }
+    .drive-wrap {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: calc(100dvh - 24px - var(--safe-t) - var(--safe-b));
+      display: flex;
+      flex-direction: column;
+    }
+    .drive-step {
+      text-align: center;
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 1.25;
+      padding: 12px 8px 16px;
+      flex: 0 0 auto;
+    }
+    .drive-sub {
+      display: block;
+      margin-top: 8px;
+      font-size: 18px;
+      font-weight: 600;
+      color: rgba(246,241,232,0.7);
+    }
+    .drive-hit {
+      flex: 1 1 auto;
+      min-height: 46vh;
+      width: 100%;
+      border-radius: 28px;
+      background: #C4392D;
+      color: #fff;
+      font-size: 42px;
+      font-weight: 800;
+      box-shadow: 0 16px 32px rgba(0,0,0,0.35);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .drive-hit.paused { background: #1F7A4D; }
+    .drive-hit .en { color: rgba(255,255,255,0.85); font-size: 18px; font-weight: 600; }
+    .drive-end {
+      margin-top: 12px;
+      width: 100%;
+      min-height: 72px;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      font-size: 22px;
+      font-weight: 800;
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    .drive-end .en { color: rgba(255,255,255,0.75); }
+    .sr-file {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+    }
+    .ocr-bar {
+      height: 14px;
+      background: #EEE8DC;
+      border-radius: 99px;
+      overflow: hidden;
+      margin: 8px 0 16px;
+    }
+    .ocr-bar > i {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--navy), var(--navy-2));
+      border-radius: 99px;
+      width: 0;
+      transition: width 0.2s ease;
+    }
+    .thumb-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      margin: 0 0 14px;
+    }
+    .thumb-row img, .evt-thumb {
+      width: 72px;
+      height: 72px;
+      object-fit: cover;
+      border-radius: 12px;
+      background: #EEE8DC;
+      flex: 0 0 auto;
+    }
+    .event-item, .event-edit, .announce-all {
+      background: #F7F3EB;
+      border-radius: 16px;
+      padding: 14px;
+      margin: 0 0 12px;
+    }
+    .event-item-top, .event-edit-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .event-item-top strong, .event-edit-top strong {
+      display: block;
+      font-size: 18px;
+      font-weight: 800;
+    }
+    .event-item .meta { color: var(--muted); font-size: 14px; font-weight: 650; }
+    .event-script {
+      font-size: 16px;
+      line-height: 1.45;
+      margin: 8px 0 12px;
+      font-weight: 600;
+    }
+    .event-edit label {
+      display: block;
+      font-size: 14px;
+      font-weight: 750;
+      color: var(--navy);
+      margin: 0 0 10px;
+    }
+    .field, input.field {
+      width: 100%;
+      min-height: 52px;
+      border: 2px solid var(--line);
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-size: 17px;
+      background: #fff;
+      color: var(--ink);
+      margin-top: 4px;
+    }
+    .event-edit-top .ghost {
+      margin-left: auto;
+      min-height: 44px;
+      font-size: 16px;
+    }
+    .event-item .row-3 .btn, .announce-all .row-2 .btn, .event-item .btn {
+      min-height: 56px;
+      font-size: 16px;
+      margin: 0;
+    }
+    .wrap-chips { flex-wrap: wrap; }
+    .wrap-chips .chip { flex: 1 1 30%; min-height: 48px; font-size: 15px; }
+    .field-script, textarea.field-script {
+      min-height: 140px;
+      font-size: 16px;
+      line-height: 1.4;
+      width: 100%;
+    }
+    .shout-list { list-style: none; padding: 0; margin: 0 0 12px; }
+    .shout-list li {
+      background: #F7F3EB;
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin: 0 0 8px;
+      font-size: 16px;
+      font-weight: 650;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .shout-list .tiny-x {
+      margin-left: auto;
+      min-height: 40px;
+      min-width: 40px;
+      padding: 0;
+    }
+    label { display: block; font-size: 14px; font-weight: 750; color: var(--navy); margin: 0 0 10px; }
+    .font-stack-fix { }
+
+  </style>
+</head>
+<body>
+  <div class="wrap" id="app"></div>
+  <input id="evt-camera" class="sr-file" type="file" accept="image/*" capture="environment" multiple>
+  <input id="evt-upload" class="sr-file" type="file" accept="image/*,application/pdf" multiple>
+  <script>
+
+    const STORAGE_KEY = "psc-v1";
+    const INSTALL_KEY = "psc-install-hint-dismissed";
+    const DRIVE_NOTICE_KEY = "psc-drive-notice-ok";
+    const FILLER_RE = /\b(um+|uh+|er+|ah+|like|you know|actually|basically|so)\b/gi;
+    const TARGET_WPM_LO = 130;
+    const TARGET_WPM_HI = 160;
+
+    const LESSONS = [
+      {
+        id: "d1",
+        title: "Structure: open, 3 points, close",
+        body: "Every strong start-up has three parts. Open with a short welcome. Then say only three things—safety, today's plan, and quality or a shout-out. Close with one clear line: Any questions? I'll be on the floor. Let's go!",
+        tip: "Use the shape: welcome, three points, close. Don't add a fourth main point.",
+        drill: "afe"
+      },
+      {
+        id: "d2",
+        title: "Nerves and breath",
+        body: "Nerves are normal. Before you speak, do box breathing: in for 4, hold 4, out 4, hold 4. Two rounds steady your voice.",
+        tip: "Before you speak, take one slow box breath. Then start with a short welcome.",
+        drill: "breathe"
+      },
+      {
+        id: "d3",
+        title: "Voice and projection",
+        body: "The AFE floor is loud. People in the back need to hear you. Speak from your chest, not a shout. Chin up, mouth open, finish every word.",
+        tip: "Project to the back of the group. Finish every word, especially plan, pack, and safety.",
+        drill: "afe"
+      },
+      {
+        id: "d4",
+        title: "Eye contact",
+        body: "Hold one person's eyes for a full sentence, then move on. Don't stare at your notes or only one corner of the group.",
+        tip: "Look at one person for a whole sentence, then shift. Sweep the whole team.",
+        drill: "afe"
+      },
+      {
+        id: "d5",
+        title: "Pace: slow and clear",
+        body: "When you're nervous, you speed up. Aim for about 130 to 160 words a minute. Slow down even more on CPT, safety, and break times.",
+        tip: "Speak a little slower than feels natural. Slow down on numbers, times, and safety.",
+        drill: "afe"
+      },
+      {
+        id: "d6",
+        title: "Pausing",
+        body: "Take a one-second pause at the end of a sentence. Take two seconds when you change topics. Pauses make you sound calm, and the team remembers more.",
+        tip: "Pause after your opening, and pause before your close. Silence is part of the talk.",
+        drill: "afe"
+      },
+      {
+        id: "d7",
+        title: "Energy for start-ups",
+        body: "Energy is not yelling. Stand tall, head up, and put life in your first sentence. 'Good morning, AFE' should set the tone for the shift.",
+        tip: "Open with energy: Good morning, AFE. Thank you for being here. Then go into safety.",
+        drill: "afe"
+      },
+      {
+        id: "d8",
+        title: "Cut filler words",
+        body: "Words like um, uh, like, you know, actually, basically, and so make you sound unsure. When you need a second, just pause. You don't have to fill the silence.",
+        tip: "If you feel an um coming, close your mouth and pause. Then say the next point.",
+        drill: "impromptu"
+      },
+      {
+        id: "d9",
+        title: "A strong opening",
+        body: "The first ten seconds win attention. Weak: 'Um, I guess today…' Strong: 'Good morning, AFE. Today we lead with safety, then we hit CPT on time.'",
+        tip: "Memorize your first two sentences. Start clean, with no filler.",
+        drill: "afe"
+      },
+      {
+        id: "d10",
+        title: "A strong close",
+        body: "The close matters as much as the open. Finish with: I'll be on the floor. Let's have a safe, strong day. Let's go, AFE! Then let the team move.",
+        tip: "Don't trail off. End with a clear call: I'll be on the floor. Let's go, AFE.",
+        drill: "afe"
+      },
+      {
+        id: "d11",
+        title: "Body language",
+        body: "Stand on both feet, shoulders open, hands visible. Use your hands to count the three points. Don't hide behind notes. Your body should back up your voice.",
+        tip: "Stand tall, hands free. Count your three points on your fingers.",
+        drill: "afe"
+      },
+      {
+        id: "d12",
+        title: "The safety talk",
+        body: "Safety is the first point, not a rush-through. Name one focus—like never reaching into a jam, or lifting with your legs. Add one sentence on why it matters.",
+        tip: "Give a 60-second safety talk on hands clear of totes and conveyors. Never reach into a jam. Call a PA or a tech.",
+        drill: "afe"
+      },
+      {
+        id: "d13",
+        title: "Today's plan: CPT and rate",
+        body: "Say the numbers clearly: backlog, CPT time, induct, rebin, and pack UPH goals, and breaks. Say them once, slowly. The team wants the time and the target.",
+        tip: "Read a plan: We have a backlog to clear, CPT is coming, and I may flex you between induct, rebin, and pack.",
+        drill: "afe"
+      },
+      {
+        id: "d14",
+        title: "Recognition shout-outs",
+        body: "Use a name, name the action, and say why it mattered. 'Good job yesterday' is weak. 'Yesterday Sita packed with zero defects and helped a teammate' is strong.",
+        tip: "Give a 30-second shout-out. Name the person, what they did, and why it matters to AFE.",
+        drill: "afe"
+      },
+      {
+        id: "d15",
+        title: "Handling questions",
+        body: "When a question comes, pause one second. Give a short answer. If you don't know: Good question, I'll find out and come back. Don't debate during start-up.",
+        tip: "Practice answering: What if CPT is at risk? What if I'm not trained on pack today?",
+        drill: "impromptu"
+      },
+      {
+        id: "d16",
+        title: "Storytelling",
+        body: "A short work story sticks better than a rule. Situation, what happened, what we learned—in 30 seconds. Example: the risk of reaching into a jam, and the right move instead.",
+        tip: "Tell a 45-second story about a safety catch or a teammate who helped the path hit CPT.",
+        drill: "impromptu"
+      },
+      {
+        id: "d17",
+        title: "The full 3-minute start-up",
+        body: "Now put it all together: welcome, safety and stretches, plan and CPT, quality and a shout-out, then a strong close. Three minutes is enough. You don't need to make it longer.",
+        tip: "Deliver a full AFE start-up in three minutes. Welcome, safety, plan, quality or shout-out, close.",
+        drill: "afe3"
+      },
+      {
+        id: "d18",
+        title: "Pace and pauses together",
+        body: "Break the habit of rushing by pairing pace with pauses. One point, then a pause. Pause after numbers. That makes words like UPH and CPT land clearly.",
+        tip: "Give today's plan, and pause after every number and every path name: induct, rebin, pack.",
+        drill: "afe"
+      },
+      {
+        id: "d19",
+        title: "Volume on a loud floor",
+        body: "Even with conveyors and scanners, reach the back of the group. Opening your mouth and slowing down works better than yelling. A hand signal can also gather attention.",
+        tip: "Imagine the floor is loud. Project a safety focus so the last person in the group can hear it.",
+        drill: "afe"
+      },
+      {
+        id: "d20",
+        title: "Tough questions",
+        body: "Someone may push on rate, breaks, or path changes. Stay calm, repeat the question, and answer briefly. If the answer is no, say it with respect, then move the start-up forward.",
+        tip: "Answer a tough question: Why are we flexing to pack, or why is the rate goal high today?",
+        drill: "impromptu"
+      },
+      {
+        id: "d21",
+        title: "Stories for recognition",
+        body: "Turn a shout-out into a short story: what the problem was, what the person did, and how the team benefited. That makes other people want to do the same.",
+        tip: "Give a one-minute shout-out story. Name, problem, action, result.",
+        drill: "afe"
+      },
+      {
+        id: "d22",
+        title: "Impromptu speaking",
+        body: "Sometimes you have to speak with no notes. Use a simple formula: point, example, point again. Thirty seconds can be enough. Start with the point, not with um.",
+        tip: "You get 60 seconds. Explain to a new hire what rebin is, and why scanning into the right slot matters.",
+        drill: "impromptu"
+      },
+      {
+        id: "d23",
+        title: "Presence and energy",
+        body: "Where you stand, your first sentence, and your eyes create presence. When you lead stretches, you lead them—you don't just chuckle along. The team looks for a leader.",
+        tip: "Lead the opening and the stretches as if the whole AFE is watching. Strong, warm, and clear.",
+        drill: "afe"
+      },
+      {
+        id: "d24",
+        title: "Filler-word challenge",
+        body: "Today's goal: as few filler words as you can in a full start-up. If um or so shows up, close your mouth and pause. Fewer fillers sound like more confidence.",
+        tip: "Deliver a one-minute start-up. Avoid um, uh, like, you know, actually, basically, and so.",
+        drill: "afe"
+      },
+      {
+        id: "d25",
+        title: "Questions from associates",
+        body: "Practice the questions you hear a lot: When are breaks? What's my path? What's the rate? Have a short, kind, clear answer ready.",
+        tip: "Answer two questions in one minute: When are breaks, and what should I do if I see a jam?",
+        drill: "impromptu"
+      },
+      {
+        id: "d26",
+        title: "Confidence under pressure",
+        body: "When CPT is tight, your voice can rise or speed up. First a breath, then your three points. Don't drop the structure under pressure. A calm lead calms the floor.",
+        tip: "CPT is at risk. Give a 60-second start-up that is calm, clear, and focused on the plan.",
+        drill: "afe"
+      },
+      {
+        id: "d27",
+        title: "A change of plan",
+        body: "You may flex people between induct, rebin, and pack mid-shift. Say the change short and straight: why, who, and when. Don't over-apologize. Give a clear direction.",
+        tip: "Tell the team you need to flex three people to pack to protect CPT. Be clear and respectful.",
+        drill: "impromptu"
+      },
+      {
+        id: "d28",
+        title: "Leading stretches",
+        body: "Stretches are also speaking. Count out loud, show the move, and join in. Even in 30 seconds, start and end them clearly.",
+        tip: "Lead 30 seconds of stretches with a strong voice: wrists, shoulders, neck, and back. Then go into the plan.",
+        drill: "afe"
+      },
+      {
+        id: "d29",
+        title: "Putting it all together",
+        body: "You now have structure, breath, voice, eyes, pauses, and fewer fillers. Today, give one clean start-up. Aim for well, not fast.",
+        tip: "Give your best two-minute AFE start-up. Use structure, pauses, projection, and a strong close.",
+        drill: "afe"
+      },
+      {
+        id: "d30",
+        title: "Your best start-up",
+        body: "Day 30 is here. Deliver your own script or today's start-up with full energy. Strong open, three clear points, clean close. You are the voice of the team.",
+        tip: "This is your graduation talk. Deliver a full start-up as if the shift is standing in front of you.",
+        drill: "myscript"
+      }
+    ];
+
+    const AFE_PROMPTS = [
+      {
+        id: "safety-hands",
+        kind: "safety",
+        title: "Safety: hands clear",
+        text: "Give a safety start-up. Today's focus is keeping hands clear of moving totes and conveyors. Never reach into a jam. Call your PA or a tech to clear it.",
+        hint: "Add one sentence on why this is dangerous."
+      },
+      {
+        id: "safety-lift",
+        kind: "safety",
+        title: "Safety: lifting",
+        text: "Give a safety talk on lifting. Bend your knees, keep the load close, and never twist while carrying. Ask for help with heavy items.",
+        hint: "Be clear about lifting with your legs."
+      },
+      {
+        id: "safety-pack",
+        kind: "safety",
+        title: "Safety: pack station",
+        text: "Talk about pack safety. Watch your knife and tape gun, and keep your station clear so nothing becomes a trip hazard.",
+        hint: "Don't forget to mention a clear station."
+      },
+      {
+        id: "safety-walk",
+        kind: "safety",
+        title: "Safety: walkways",
+        text: "Remind the team to stay in walkways, watch for PIT traffic, and stop if they see something unsafe. Report it to you or a PA.",
+        hint: "Tell the team to stop and report anything unsafe."
+      },
+      {
+        id: "plan-cpt",
+        kind: "plan",
+        title: "Plan: CPT",
+        text: "Share today's plan. There is backlog to work. CPT is coming up. Rate goals are set for induct, rebin, and pack. You may flex people as volume moves. Stay ready.",
+        hint: "Say CPT, backlog, and flex clearly."
+      },
+      {
+        id: "plan-paths",
+        kind: "plan",
+        title: "Plan: paths",
+        text: "Assign the plan out loud. Path assignments are posted. Breaks will be on time. If you are cross-trained, you may move between induct, rebin, and pack.",
+        hint: "Mention both breaks and path assignments."
+      },
+      {
+        id: "shout-quality",
+        kind: "shout",
+        title: "Shout-out: quality",
+        text: "Give a recognition shout-out to a teammate who had zero defects, scanned every item into the right slot, or caught a wrong box before it went out.",
+        hint: "Name the person, the action, and why it mattered."
+      },
+      {
+        id: "shout-help",
+        kind: "shout",
+        title: "Shout-out: help",
+        text: "Shout out someone who helped a teammate, caught a safety issue, or stepped up when volume moved. Name the person, the action, and the result.",
+        hint: "Tell it as a short story."
+      },
+      {
+        id: "full-startup",
+        kind: "full",
+        title: "Full start-up",
+        text: "Deliver a full AFE start-up. Welcome the team. Safety first, then a short stretch. Share the plan and CPT. Add quality or a shout-out. Close strong: I'll be on the floor. Let's go, AFE!",
+        hint: "Open, three points, close."
+      },
+      {
+        id: "quality-scan",
+        kind: "quality",
+        title: "Quality",
+        text: "Talk quality. At rebin, scan every item into the right slot. At pack, check that the item matches the slip and the box size is right. No empty or wrong boxes going out.",
+        hint: "Cover both rebin and pack."
+      }
+    ];
+
+    const IMPROMPTU = [
+      { id: "i1", text: "Why does safety come first on this shift, in your own words?", hint: "Give one reason and one example." },
+      { id: "i2", text: "Explain rebin to a new hire, and why the right slot matters.", hint: "Keep it short and simple." },
+      { id: "i3", text: "CPT is at risk. What do you tell the team in the next minute?", hint: "Give a calm, clear plan." },
+      { id: "i4", text: "A new associate asks what a PA does, and when to call one. Answer them.", hint: "Give a short, kind answer." },
+      { id: "i5", text: "Thank the team for a hard day in 30 to 60 seconds.", hint: "Praise one specific thing." },
+      { id: "i6", text: "What should someone do if they see a jam on the conveyor?", hint: "Don't reach in. Call a PA or a tech." },
+      { id: "i7", text: "You need to flex three people from rebin to pack. Say it to the team.", hint: "Cover why, who, and when." },
+      { id: "i8", text: "Tell a short story about a teammate who helped the path.", hint: "Situation, action, result." },
+      { id: "i9", text: "Someone asks why the rate goal looks high today. Answer with respect.", hint: "Pause, then give a short answer." },
+      { id: "i10", text: "Lead the idea of stretches: why we do them, and how you will lead them.", hint: "Use energy, not yelling." },
+      { id: "i11", text: "What does a strong close sound like, and why does it matter?", hint: "Practice the closing line." },
+      { id: "i12", text: "An associate looks upset after a path change. What do you say, briefly?", hint: "Listen, give a short answer, then move the start-up forward." }
+    ];
+
+    const CHECKS = [
+      { id: "eyes", label: "Eye contact" },
+      { id: "loud", label: "Loud and clear" },
+      { id: "pauses", label: "I used pauses" },
+      { id: "open", label: "Strong opening" },
+      { id: "close", label: "Strong close" }
+    ];
+
+    const BADGES = [
+      { id: "starter", label: "Starter", test: (s) => s.sessions.length >= 1 },
+      { id: "steady", label: "Steady Voice", test: (s) => s.streak >= 3 },
+      { id: "clear", label: "Clear Speaker", test: (s) => Object.keys(s.completedDays).length >= 7 },
+      { id: "leader", label: "Floor Leader", test: (s) => Object.keys(s.completedDays).length >= 14 },
+      { id: "coach", label: "Floor Coach", test: (s) => Object.keys(s.completedDays).length >= 21 },
+      { id: "confident", label: "Confident Coach", test: (s) => Object.keys(s.completedDays).length >= 30 },
+      { id: "road", label: "Road Practice", test: (s) => s.sessions.filter((x) => x.type === "drive").length >= 1 },
+      { id: "clean", label: "Clean Talk", test: (s) => s.sessions.some((x) => x.fillers === 0 && x.words >= 20) }
+    ];
+
+
+    const LEADERSHIP = [
+      {
+        id: "lc1",
+        title: "Building trust",
+        body: "Trust is built in small, consistent moments. Say what you'll do, then do it. Be even with people on a hard day and a good day. When you don't know, say so, and come back with the answer. Your start-up is one of those moments: if the team can count on your word, they'll lean in when you speak.",
+        tip: "Speak for 60 seconds about one way you'll earn trust this shift. Be specific.",
+        drill: "impromptu",
+        prompt: "Tell the team one promise you'll keep today, and why they can count on you. Keep it personal, not corporate."
+      },
+      {
+        id: "lc2",
+        title: "Learning and using names",
+        body: "A name is the shortest path to connection. Learn it, say it, and use it in shout-outs, path changes, and thank-yous. If you forget, ask again with respect: 'Please remind me of your name.' Using someone's name in a start-up tells the whole team that people matter here.",
+        tip: "Practice a 45-second shout-out that uses a name, the action, and why it helped us.",
+        drill: "impromptu",
+        prompt: "Give a shout-out that uses a teammate's name, what they did, and why it mattered to the path."
+      },
+      {
+        id: "lc3",
+        title: "Active listening",
+        body: "Listening is part of speaking. When a question comes, pause, look at the person, and repeat the heart of what you heard before you answer. 'So you're asking about break times — is that right?' People feel seen, and you avoid talking past them. Then give a short, honest answer.",
+        tip: "Practice hearing a tough question, reflecting it, and answering in one minute.",
+        drill: "impromptu",
+        prompt: "An associate says the rate goal feels unfair. Reflect what you heard, then answer with respect."
+      },
+      {
+        id: "lc4",
+        title: "Storytelling that connects",
+        body: "A short story beats a rule. Use a simple shape: what was happening, what someone did, and what we learned. Keep it under 45 seconds, and make the teammate the hero, not yourself. Stories help people feel the 'why' — safety for each other, pride in the path, care for family at home.",
+        tip: "Tell a 45-second floor story with a teammate at the center.",
+        drill: "impromptu",
+        prompt: "Tell a short story about a teammate who helped us stay safe or hit CPT. Situation, action, result."
+      },
+      {
+        id: "lc5",
+        title: "Recognition that lands",
+        body: "Recognition lands when it's specific, public, and true. Name the person, name the behavior, and say why it helped the team. Skip 'good job, everyone.' A real shout-out makes someone feel proud, and it shows the rest of us what we value. Do it in the start-up, then follow up on the floor.",
+        tip: "Deliver a shout-out you'd be proud to hear about yourself.",
+        drill: "impromptu",
+        prompt: "Recognize someone by name for a specific action. Say why it mattered to our team, and thank them."
+      },
+      {
+        id: "lc6",
+        title: "Speaking with energy",
+        body: "Energy is warmth plus clarity, not volume for its own sake. Stand tall, start with a hook the team can feel, and let your voice show that you're glad to be with them. People borrow your energy. If you sound rushed or flat, the shift starts that way. If you sound proud of this team, they stand a little taller.",
+        tip: "Open a start-up with a warm hook, then move into safety and the plan.",
+        drill: "afe",
+        prompt: "Open with a personal hook — 'Team, I'm glad we're here together' — then give a full, energetic AFE start-up."
+      },
+      {
+        id: "lc7",
+        title: "Inviting questions",
+        body: "A start-up isn't a monologue. Leave a real door open: 'What questions do you have?' Then wait. The silence is not a failure; it's space. When someone speaks, thank them for asking. If you need to take it offline, say when you'll come back, and then actually come back. People trust the leader who follows through.",
+        tip: "Practice your close, invite questions, and answer one with care.",
+        drill: "impromptu",
+        prompt: "Close your start-up, invite questions, wait, then answer: 'When are breaks?' and 'What if I see a jam?'"
+      },
+      {
+        id: "lc8",
+        title: "Follow-up on the floor",
+        body: "The start-up is the beginning, not the whole job. After you speak, walk the path. Use names. Check on the person who asked a question. Repeat a safety point one-to-one. Thank someone you shouted out. Connection is built in the follow-up: you said you'd be on the floor, and then you were.",
+        tip: "Describe how you'll follow up in the first hour after start-up.",
+        drill: "impromptu",
+        prompt: "Tell us your first-hour plan after start-up: who you'll check on, what you'll look for, and how you'll close the loop."
+      }
+    ];
+
+    function defaultState() {
+      return {
+        guidedDone: false,
+        completedDays: {},
+        lastDay: 0,
+        streak: 0,
+        lastPracticeDate: "",
+        sessions: [],
+        myScript: "",
+        scrollSpeed: 40,
+        events: [],
+        shoutouts: [],
+        personalTouch: "",
+        includePrompt: true
+      };
+    }
+
+    function loadState() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+        return Object.assign(defaultState(), raw, {
+          completedDays: raw.completedDays || {},
+          sessions: Array.isArray(raw.sessions) ? raw.sessions : [],
+          events: Array.isArray(raw.events) ? raw.events : [],
+          shoutouts: Array.isArray(raw.shoutouts) ? raw.shoutouts : [],
+          personalTouch: raw.personalTouch || "",
+          includePrompt: raw.includePrompt !== false
+        });
+      } catch (e) {
+        return defaultState();
+      }
+    }
+    function saveState() {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+    }
+
+    let state = loadState();
+    let screen = "home";
+    let lessonIndex = 0;
+    let practiceKind = "afe";
+    let practiceSecs = 60;
+    let prompt = null;
+    let remaining = 0;
+    let timerId = 0;
+    let running = false;
+    let recording = false;
+    let mediaRecorder = null;
+    let recStream = null;
+    let recChunks = [];
+    let recUrl = "";
+    let recPlayer = null;
+    let errorMsg = "";
+    let srSupported = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+    let recognition = null;
+    let liveTranscript = "";
+    let finalTranscript = "";
+    let speechEvents = [];
+    let speakStartedAt = 0;
+    let speakEndedAt = 0;
+    let lastSpeechAt = 0;
+    let stats = null;
+    let reviewChecks = {};
+    let reviewConf = 0;
+    let scriptDraft = state.myScript || "";
+    let prompterOn = false;
+    let prompterOffset = 0;
+    let prompterRaf = 0;
+    let breathePhase = -1;
+    let breatheRound = 0;
+    let breatheCount = 0;
+    let breatheTimer = 0;
+    let breatheRunning = false;
+    let drive = null;
+    let themeMeta = null;
+    let lessonTrack = "core";
+
+    function todayStr() {
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return y + "-" + m + "-" + day;
+    }
+    function daysBetween(a, b) {
+      const pa = a.split("-").map(Number);
+      const pb = b.split("-").map(Number);
+      const da = new Date(pa[0], pa[1] - 1, pa[2]);
+      const db = new Date(pb[0], pb[1] - 1, pb[2]);
+      return Math.round((db - da) / 86400000);
+    }
+    function escapeHtml(s) {
+      return String(s == null ? "" : s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+    function currentDayIndex() {
+      for (let i = 0; i < LESSONS.length; i++) {
+        if (!state.completedDays[LESSONS[i].id]) return i;
+      }
+      return LESSONS.length - 1;
+    }
+    function completedCount() {
+      return Object.keys(state.completedDays).length;
+    }
+    function earnedBadges() {
+      return BADGES.filter((b) => b.test(state));
+    }
+    function recentSessions(n) {
+      return state.sessions.filter((s) => s.wpm || s.fillers != null).slice(-n);
+    }
+
+    function isIOS() {
+      const ua = navigator.userAgent || "";
+      if (/iPad|iPhone|iPod/.test(ua)) return true;
+      return navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
+    }
+    function isStandalone() {
+      return window.navigator.standalone === true ||
+        window.matchMedia("(display-mode: standalone)").matches;
+    }
+    function isSafari() {
+      const ua = navigator.userAgent || "";
+      if (/CriOS|FxiOS|EdgiOS|OPiOS|OPT\/|DuckDuckGo|YaBrowser/.test(ua)) return false;
+      return /Safari/.test(ua) && /Version\//.test(ua);
+    }
+    function installDismissed() {
+      return localStorage.getItem(INSTALL_KEY) === "1";
+    }
+    function dismissInstall() {
+      localStorage.setItem(INSTALL_KEY, "1");
+      render();
+    }
+    function registerWorker() {
+      if (!("serviceWorker" in navigator)) return;
+      if (location.protocol !== "https:") return;
+      navigator.serviceWorker.register("./sw.js").catch(() => {});
+    }
+
+    function preferVoice() {
+      try {
+        const list = speechSynthesis.getVoices() || [];
+        const tests = [
+          (v) => /en-US/i.test(v.lang) && /Samantha|Aaron|Nicky|Susan|Tom|Allison|Ava|Zoe|Evan|Nathan/.test(v.name),
+          (v) => /en-US/i.test(v.lang) && /Google/.test(v.name),
+          (v) => /en-US|en_US/i.test(v.lang),
+          (v) => /^en/i.test(v.lang) && /US|United States|American/.test(v.name + " " + v.lang),
+          (v) => /^en/i.test(v.lang)
+        ];
+        for (const t of tests) {
+          const found = list.find(t);
+          if (found) return found;
+        }
+      } catch (e) {}
+      return null;
+    }
+    function stopSpeech() {
+      try { speechSynthesis.cancel(); } catch (e) {}
+    }
+
+    function setTheme(color) {
+      if (!themeMeta) themeMeta = document.querySelector('meta[name="theme-color"]');
+      if (themeMeta) themeMeta.setAttribute("content", color);
+    }
+
+    function pickMime() {
+      const types = ["audio/mp4", "audio/webm;codecs=opus", "audio/webm", "audio/aac"];
+      return types.find((t) => window.MediaRecorder && MediaRecorder.isTypeSupported(t)) || "";
+    }
+    function clearRecording() {
+      if (recPlayer) { try { recPlayer.pause(); } catch (e) {} recPlayer = null; }
+      if (recUrl) { URL.revokeObjectURL(recUrl); recUrl = ""; }
+      recChunks = [];
+    }
+    async function toggleRecord() {
+      errorMsg = "";
+      if (recording) {
+        try { if (mediaRecorder && mediaRecorder.state === "recording") mediaRecorder.stop(); } catch (e) {}
+        recording = false;
+        render();
+        return;
+      }
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        errorMsg = "Recording is not supported in this browser.";
+        render();
+        return;
+      }
+      try {
+        recStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const mime = pickMime();
+        recChunks = [];
+        mediaRecorder = mime ? new MediaRecorder(recStream, { mimeType: mime }) : new MediaRecorder(recStream);
+        mediaRecorder.ondataavailable = (e) => { if (e.data && e.data.size) recChunks.push(e.data); };
+        mediaRecorder.onstop = () => {
+          if (recStream) recStream.getTracks().forEach((t) => t.stop());
+          recStream = null;
+          if (recUrl) URL.revokeObjectURL(recUrl);
+          const type = (mediaRecorder && mediaRecorder.mimeType) || mime || "audio/webm";
+          if (recChunks.length) recUrl = URL.createObjectURL(new Blob(recChunks, { type: type }));
+          recording = false;
+          render();
+        };
+        mediaRecorder.start();
+        recording = true;
+        render();
+      } catch (err) {
+        errorMsg = "Couldn't open the mic. Allow the microphone in Settings.";
+        recording = false;
+        render();
+      }
+    }
+    function playMe() {
+      if (!recUrl) return;
+      if (recPlayer) { try { recPlayer.pause(); } catch (e) {} }
+      recPlayer = new Audio(recUrl);
+      recPlayer.play().catch(() => {});
+    }
+
+    function SpeechRec() {
+      return window.SpeechRecognition || window.webkitSpeechRecognition || null;
+    }
+    function stopRecognition() {
+      if (!recognition) return;
+      try { recognition.onresult = null; recognition.onerror = null; recognition.onend = null; recognition.stop(); } catch (e) {}
+      recognition = null;
+    }
+    function startRecognition(onUpdate) {
+      const Ctor = SpeechRec();
+      if (!Ctor) return false;
+      stopRecognition();
+      liveTranscript = "";
+      finalTranscript = "";
+      speechEvents = [];
+      lastSpeechAt = 0;
+      try {
+        recognition = new Ctor();
+        recognition.lang = "en-US";
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.maxAlternatives = 1;
+        recognition.onresult = (ev) => {
+          let interim = "";
+          let fin = finalTranscript;
+          for (let i = ev.resultIndex; i < ev.results.length; i++) {
+            const t = ev.results[i][0].transcript || "";
+            if (ev.results[i].isFinal) fin += t + " ";
+            else interim += t;
+          }
+          finalTranscript = fin;
+          liveTranscript = (fin + " " + interim).replace(/\s+/g, " ").trim();
+          lastSpeechAt = Date.now();
+          speechEvents.push({ t: lastSpeechAt, text: liveTranscript });
+          if (onUpdate) onUpdate();
+        };
+        recognition.onspeechstart = () => { lastSpeechAt = Date.now(); };
+        recognition.onerror = () => {};
+        recognition.onend = () => {
+          const keep = running || (drive && drive.running && !drive.paused);
+          if (keep && recognition) {
+            try { recognition.start(); } catch (e) {}
+          }
+        };
+        recognition.start();
+        return true;
+      } catch (e) {
+        recognition = null;
+        return false;
+      }
+    }
+
+    function countFillers(text) {
+      if (!text) return { count: 0, list: [] };
+      const list = [];
+      const re = new RegExp(FILLER_RE.source, "gi");
+      let m;
+      while ((m = re.exec(text))) list.push(m[0].toLowerCase().replace(/um+/, "um").replace(/uh+/, "uh").replace(/ah+/, "uh").replace(/er+/, "uh"));
+      return { count: list.length, list: list };
+    }
+    function wordCount(text) {
+      return (text || "").trim().split(/\s+/).filter(Boolean).length;
+    }
+    function longestPause(events, start, end) {
+      if (!events.length) return 0;
+      let longest = 0;
+      let prev = start || events[0].t;
+      for (const ev of events) {
+        const gap = (ev.t - prev) / 1000;
+        if (gap > longest) longest = gap;
+        prev = ev.t;
+      }
+      if (end && prev) {
+        const tail = (end - prev) / 1000;
+        if (tail > 1 && tail < 8 && tail > longest) longest = tail;
+      }
+      return longest;
+    }
+    function computeStats() {
+      const end = speakEndedAt || Date.now();
+      const start = speakStartedAt || end;
+      let duration = Math.max(0, (end - start) / 1000);
+      if (speechEvents.length) {
+        const first = speechEvents[0].t;
+        const last = speechEvents[speechEvents.length - 1].t;
+        const spoken = Math.max(0, (last - first) / 1000);
+        if (spoken > 1) duration = Math.max(spoken, duration * 0.5);
+      }
+      const text = (finalTranscript || liveTranscript || "").trim();
+      const words = wordCount(text);
+      const fillers = countFillers(text);
+      const minutes = duration / 60;
+      const wpm = minutes > 0 && words > 0 ? Math.round(words / minutes) : 0;
+      const pause = longestPause(speechEvents, start, end);
+      return {
+        duration: duration,
+        words: words,
+        wpm: wpm,
+        fillers: fillers.count,
+        fillerList: fillers.list,
+        pause: pause,
+        transcript: text,
+        hasSpeech: words > 0
+      };
+    }
+
+    const ONES = ["zero","one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen"];
+    const TENS = ["","","twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety"];
+    function numWords(n) {
+      n = Math.round(Math.abs(Number(n) || 0));
+      if (n < 20) return ONES[n];
+      if (n < 100) return TENS[Math.floor(n / 10)] + (n % 10 ? " " + ONES[n % 10] : "");
+      if (n < 1000) {
+        const rest = n % 100;
+        return ONES[Math.floor(n / 100)] + " hundred" + (rest ? " " + numWords(rest) : "");
+      }
+      return String(n);
+    }
+    function pacePhrase(wpm) {
+      if (!wpm) return "I could not measure your pace.";
+      if (wpm < 110) return "Your pace was a little slow, about " + numWords(wpm) + " words a minute. That's okay if you stay clear.";
+      if (wpm < TARGET_WPM_LO) return "Your pace was a bit under the target, about " + numWords(wpm) + " words a minute.";
+      if (wpm <= TARGET_WPM_HI) return "Your pace was right on target, about " + numWords(wpm) + " words a minute.";
+      if (wpm <= 180) return "Your pace was a little fast, about " + numWords(wpm) + " words a minute. Try a pause.";
+      return "Your pace was quite fast, about " + numWords(wpm) + " words a minute. Slow down and pause.";
+    }
+    function feedbackSpeech(st) {
+      if (!st || !st.hasSpeech) {
+        return "Time's up. I couldn't transcribe the words this time, but you showed up and finished the drill. Nice work. The next one is coming.";
+      }
+      const sec = Math.max(1, Math.round(st.duration));
+      let msg = "You spoke for " + numWords(sec) + " second" + (sec === 1 ? "" : "s") + ". ";
+      if (st.fillers === 0) msg += "I heard no filler words. ";
+      else if (st.fillers === 1) msg += "I heard one filler word. ";
+      else msg += "I heard " + numWords(st.fillers) + " filler words. ";
+      msg += pacePhrase(st.wpm) + " Nice work.";
+      return msg;
+    }
+
+    function touchStreak() {
+      const t = todayStr();
+      if (state.lastPracticeDate === t) return;
+      if (!state.lastPracticeDate) state.streak = 1;
+      else {
+        const gap = daysBetween(state.lastPracticeDate, t);
+        if (gap === 1) state.streak += 1;
+        else if (gap > 1) state.streak = 1;
+      }
+      state.lastPracticeDate = t;
+    }
+    function logSession(entry) {
+      touchStreak();
+      state.sessions.push(Object.assign({
+        date: todayStr(),
+        ts: Date.now(),
+        type: "practice",
+        duration: 0,
+        wpm: 0,
+        fillers: null,
+        words: 0,
+        confidence: 0,
+        checks: {}
+      }, entry));
+      if (state.sessions.length > 200) state.sessions = state.sessions.slice(-200);
+      saveState();
+    }
+    function markDayDone(idx) {
+      const les = LESSONS[idx];
+      if (!les) return;
+      if (!state.completedDays[les.id]) {
+        state.completedDays[les.id] = todayStr();
+        state.lastDay = idx;
+        saveState();
+      }
+    }
+
+    let announceOverride = "";
+    let eventDrafts = [];
+    let scanProgress = { pct: 0, label: "", thumbs: [], warning: "" };
+    let bulletinReplace = true;
+    let bulletinMonth = "";
+    let addForm = null;
+    const photoUrlCache = {};
+    const TESSERACT_SRC = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
+    const PHOTO_DB = "psc-photos-v1";
+    const PHOTO_STORE = "photos";
+    const UPCOMING_DAYS = 7;
+
+    const EVENT_TYPES = [
+      { id: "event", label: "Event" },
+      { id: "safety", label: "Safety note" },
+      { id: "shoutout", label: "Shout-out" },
+      { id: "reminder", label: "Reminder" },
+      { id: "other", label: "Other" }
+    ];
+
+    const SCRIPT_OPENERS = [
+      "Team, I'm excited about this one.",
+      "Family, I've got a few things I'm proud to share with you today.",
+      "Hey AFE, before we get rolling, I want to talk with us for a moment.",
+      "Team, thank you for being here. I've got some good things to share.",
+      "All right, AFE, this one matters to us, so I want you to hear it clearly.",
+      "Good morning, team. I want to start with something that brings us together."
+    ];
+    const SCRIPT_WHYS = {
+      event: [
+        "This is a chance for us to connect off the floor and enjoy each other.",
+        "Days like this remind us we're a team, not just a path.",
+        "I want us to show up for this because we work hard, and we deserve a moment of fun."
+      ],
+      safety: [
+        "We look out for each other, and this is how we all go home safe to our families.",
+        "Safety is how we take care of our people on this floor.",
+        "If we get this right, we protect the teammate standing next to us."
+      ],
+      shoutout: [
+        "When we celebrate each other, it makes this a place people want to be.",
+        "Recognition is how we show our teammates they matter.",
+        "I want us to notice the good, out loud, so nobody feels invisible."
+      ],
+      reminder: [
+        "I want us all to be ready so nobody is caught off guard.",
+        "This helps us support each other when the day gets busy.",
+        "If we stay aligned, we make the shift easier for everyone."
+      ],
+      other: [
+        "I wanted you to hear this from me, because it matters to our team.",
+        "We're in this together, and I didn't want this to get lost in the noise."
+      ]
+    };
+    const SCRIPT_CTAS = [
+      "If you can make it, I'd love to see you there.",
+      "Come find me if you have questions — I'll be on the floor with you.",
+      "Please pass this along to a teammate who might have missed it.",
+      "Let's show up for this, and for each other.",
+      "If this is for you, I hope you'll join us."
+    ];
+    const SCRIPT_CLOSERS = [
+      "Thank you for everything you do for this team. Let's have a safe, strong day.",
+      "I appreciate you. Let's take care of each other out there.",
+      "Thanks for listening, team. I'm grateful to work with you. Let's go, AFE.",
+      "Thank you. I'll be on the floor — come see me anytime.",
+      "I'm proud to lead this team. Thank you, and let's get after it."
+    ];
+    const CONNECTION_PROMPTS = [
+      "Ask: who's got plans with family this week?",
+      "Celebrate a work anniversary or a first week on the path.",
+      "Ask someone new their name and one thing that helps them have a good shift.",
+      "Share a quick win you saw on the floor yesterday, and thank that person.",
+      "Ask: what's one thing that would make this shift a little easier?",
+      "Thank a PA or a veteran associate by name for backing up the team.",
+      "Ask who learned a new path this week and give them a hand.",
+      "Share a short story about a teammate who helped the path hit CPT.",
+      "Ask the team to look out for someone who might need a hand today.",
+      "Invite one person to share a shout-out of their own before we start."
+    ];
+
+    function newId(prefix) {
+      return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    }
+    function seedHash(s) {
+      let h = 0;
+      const str = String(s || "");
+      for (let i = 0; i < str.length; i++) h = ((h << 5) - h) + str.charCodeAt(i) | 0;
+      return Math.abs(h);
+    }
+    function pickSeeded(arr, seed) {
+      if (!arr || !arr.length) return "";
+      return arr[seedHash(seed) % arr.length];
+    }
+    function emptyEvent(partial) {
+      return Object.assign({
+        id: newId("e_"),
+        title: "",
+        date: "",
+        time: "",
+        location: "",
+        notes: "",
+        type: "event",
+        source: "scan",
+        photoIds: [],
+        scriptCustom: "",
+        created: Date.now()
+      }, partial || {});
+    }
+    function prompterText() {
+      if (practiceKind === "announce" && announceOverride) return announceOverride;
+      return state.myScript || "";
+    }
+
+    function addDays(iso, n) {
+      const p = iso.split("-").map(Number);
+      const d = new Date(p[0], p[1] - 1, p[2]);
+      d.setDate(d.getDate() + n);
+      return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+    }
+    function monthPrefix(iso) {
+      return (iso || todayStr()).slice(0, 7);
+    }
+    function monthLabel(ym) {
+      const p = (ym || "").split("-").map(Number);
+      if (p.length < 2) return ym;
+      const d = new Date(p[0], p[1] - 1, 1);
+      return d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+    }
+    function upcomingEvents() {
+      const today = todayStr();
+      const end = addDays(today, UPCOMING_DAYS);
+      return (state.events || [])
+        .filter((e) => e.date && e.date >= today && e.date <= end)
+        .sort((a, b) => (a.date + " " + (a.time || "99:99")).localeCompare(b.date + " " + (b.time || "99:99")));
+    }
+    function todaysEvents() {
+      const today = todayStr();
+      return upcomingEvents().filter((e) => e.date === today);
+    }
+    function comingUpEvents() {
+      const today = todayStr();
+      const start = addDays(today, 1);
+      const end = addDays(today, 5);
+      return upcomingEvents().filter((e) => e.date >= start && e.date <= end);
+    }
+    function formatPrettyDate(iso) {
+      if (!iso) return "";
+      const p = iso.split("-").map(Number);
+      const d = new Date(p[0], p[1] - 1, p[2]);
+      return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+    }
+    function formatPrettyTime(hhmm) {
+      if (!hhmm) return "";
+      const parts = hhmm.split(":");
+      let h = Number(parts[0]);
+      const m = parts[1] || "00";
+      const ampm = h >= 12 ? "PM" : "AM";
+      h = h % 12;
+      if (h === 0) h = 12;
+      return m === "00" ? (h + " " + ampm) : (h + ":" + m + " " + ampm);
+    }
+    function formatWhen(ev) {
+      const today = todayStr();
+      const tomorrow = addDays(today, 1);
+      const timeBit = ev.time ? " at " + formatPrettyTime(ev.time) : "";
+      if (ev.date === today) return "today" + timeBit;
+      if (ev.date === tomorrow) return "tomorrow" + timeBit;
+      if (!ev.date) return ev.time ? "at " + formatPrettyTime(ev.time) : "";
+      const p = ev.date.split("-").map(Number);
+      const d = new Date(p[0], p[1] - 1, p[2]);
+      return d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }) + timeBit;
+    }
+    function locationPhrase(loc) {
+      if (!loc) return "";
+      const t = loc.trim();
+      if (/^(in|at|on)\b/i.test(t)) return " " + t;
+      return " at " + t;
+    }
+    function eventWhy(ev, seed) {
+      const key = ev.type && SCRIPT_WHYS[ev.type] ? ev.type : "event";
+      return pickSeeded(SCRIPT_WHYS[key], seed + "-why-" + (ev.id || ev.title));
+    }
+
+    function autoEventScript(ev) {
+      const seed = (ev.id || ev.title) + "|" + (ev.date || "") + "|" + todayStr();
+      const hook = pickSeeded(SCRIPT_OPENERS, seed + "-open");
+      const title = (ev.title || "something for our team").replace(/\.$/, "");
+      const when = formatWhen(ev);
+      const loc = locationPhrase(ev.location);
+      const whenBit = when ? " " + when : "";
+      const lines = [
+        hook,
+        "We have " + title + whenBit + loc + ".",
+        eventWhy(ev, seed)
+      ];
+      if (ev.notes) lines.push(ev.notes.replace(/\.$/, "") + ".");
+      lines.push(pickSeeded(SCRIPT_CTAS, seed + "-cta"));
+      lines.push(pickSeeded(SCRIPT_CLOSERS, seed + "-close"));
+      return lines.join(" ").replace(/\s+/g, " ").trim();
+    }
+    function getEventScript(ev) {
+      if (ev && ev.scriptCustom && ev.scriptCustom.trim()) return ev.scriptCustom.trim();
+      return autoEventScript(ev);
+    }
+
+    function todaysShoutouts() {
+      const today = todayStr();
+      return (state.shoutouts || []).filter((s) => !s.date || s.date === today);
+    }
+    function shoutoutSentences(seed) {
+      const list = todaysShoutouts();
+      if (!list.length) return "";
+      const bits = list.map((s) => {
+        const name = (s.name || "a teammate").trim();
+        const reason = (s.reason || "showing up for the team").trim();
+        return pickSeeded([
+          "I want to give a shout-out to " + name + " for " + reason + ".",
+          "Please join me in recognizing " + name + " — " + reason + ".",
+          "A genuine thank-you to " + name + " for " + reason + "."
+        ], seed + name);
+      });
+      return bits.join(" ") + " That's the kind of teammate we need, and I want us to keep noticing it.";
+    }
+    function personalTouchSentence(seed) {
+      const custom = (state.personalTouch || "").trim();
+      if (custom) return custom.replace(/\.$/, "") + ".";
+      if (state.includePrompt === false) return "";
+      const prompt = pickSeeded(CONNECTION_PROMPTS, todayStr() + "-prompt");
+      return "One more thing, just to stay connected: " + prompt.replace(/^Ask:\s*/i, "Can I ask — ").replace(/\?$/, "") + "?";
+    }
+    function teaserSentence(seed) {
+      const upcoming = comingUpEvents();
+      if (!upcoming.length) return "";
+      const bits = upcoming.slice(0, 3).map((ev) => {
+        const title = (ev.title || "an event").replace(/\.$/, "");
+        return title + " " + formatWhen(ev) + locationPhrase(ev.location);
+      });
+      const lead = pickSeeded([
+        "Coming up in the next few days, I don't want us to miss this:",
+        "Looking ahead, here's what's coming for us:",
+        "And a quick heads-up on what's around the corner for our team:"
+      ], seed + "-tease");
+      return lead + " " + bits.join("; ") + ".";
+    }
+
+    function dailyAnnouncementScript() {
+      const today = todaysEvents();
+      const seed = todayStr() + "|daily|" + today.map((e) => e.id).join(",");
+      const parts = [pickSeeded(SCRIPT_OPENERS, seed + "-open")];
+      if (today.length) {
+        today.forEach((ev, i) => {
+          const title = (ev.title || "something for our team").replace(/\.$/, "");
+          const when = ev.time ? " at " + formatPrettyTime(ev.time) : "";
+          const loc = locationPhrase(ev.location);
+          const lead = i === 0 ? "Today" : "Also today";
+          parts.push(lead + when + ", we have " + title + loc + ".");
+          parts.push(eventWhy(ev, seed + i));
+          if (ev.notes) parts.push(ev.notes.replace(/\.$/, "") + ".");
+        });
+        parts.push(pickSeeded(SCRIPT_CTAS, seed + "-cta"));
+      } else if (comingUpEvents().length) {
+        parts.push("I don't have a big event for us today, but I do want you to hear what's coming.");
+      } else {
+        parts.push("Even without a posted event, I want us to start this shift connected.");
+      }
+      const shouts = shoutoutSentences(seed);
+      if (shouts) parts.push(shouts);
+      const tease = teaserSentence(seed);
+      if (tease) parts.push(tease);
+      const touch = personalTouchSentence(seed);
+      if (touch) parts.push(touch);
+      parts.push(pickSeeded(SCRIPT_CLOSERS, seed + "-close"));
+      let text = parts.join(" ").replace(/\s+/g, " ").trim();
+      let words = wordCount(text);
+      if (words < 50) {
+        text += " I know this job is hard, and I don't take your effort for granted. Let's look out for one another today.";
+        words = wordCount(text);
+      }
+      if (words > 105) {
+        const trimmed = parts.filter((p, i) => i === 0 || !SCRIPT_WHYS.event.includes(p) || i < 4);
+        const shorter = [parts[0]].concat(parts.slice(1, 3));
+        if (shouts) shorter.push(shouts);
+        if (tease) shorter.push(tease);
+        shorter.push(pickSeeded(SCRIPT_CLOSERS, seed + "-close"));
+        const alt = shorter.join(" ").replace(/\s+/g, " ").trim();
+        if (wordCount(alt) >= 45) text = alt;
+      }
+      return text;
+    }
+
+    function scanButtons() {
+      return `<div class="row-2">
+        <button type="button" class="btn btn-navy" data-act="take-photo">Take Photo<span class="en">Use the camera</span></button>
+        <button type="button" class="btn btn-green" data-act="upload-image">Upload Image<span class="en">Photos, files, or a PDF</span></button>
+      </div>`;
+    }
+    function addButton() {
+      return `<button type="button" class="btn btn-ok" data-act="add-event-form">+ Add<span class="en">Add an event without a bulletin</span></button>`;
+    }
+
+    function shouldShowBulletinBanner() {
+      try { if (localStorage.getItem("psc-bulletin-banner") === todayStr()) return false; } catch (e) {}
+      const now = new Date();
+      const day = now.getDate();
+      const last = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+      const prefix = todayStr().slice(0, 7);
+      const monthEvents = (state.events || []).filter((e) => e.date && e.date.startsWith(prefix));
+      return monthEvents.length === 0 || day <= 3 || day >= last - 2;
+    }
+    function dismissBulletinBanner() {
+      try { localStorage.setItem("psc-bulletin-banner", todayStr()); } catch (e) {}
+      render();
+    }
+
+    function renderBulletinBanner() {
+      if (!shouldShowBulletinBanner()) return "";
+      return `<div class="banner" role="status">
+        <div>
+          <p>Time to scan this month's bulletin.</p>
+        </div>
+        <button class="x" type="button" data-act="dismiss-bulletin" aria-label="Dismiss">×</button>
+      </div>`;
+    }
+
+    function renderAnnouncementsCard() {
+      const upcoming = upcomingEvents();
+      const today = todaysEvents();
+      const daily = dailyAnnouncementScript();
+      const items = upcoming.map((ev) => {
+        const script = getEventScript(ev);
+        const when = [formatPrettyDate(ev.date), formatPrettyTime(ev.time)].filter(Boolean).join(" · ");
+        const thumb = (ev.photoIds && ev.photoIds[0])
+          ? `<img class="evt-thumb" data-photo="${escapeHtml(ev.photoIds[0])}" alt="">`
+          : "";
+        const typeLab = (EVENT_TYPES.find((t) => t.id === ev.type) || EVENT_TYPES[0]).label;
+        return `<div class="event-item">
+          <div class="event-item-top">${thumb}
+            <div>
+              <strong>${escapeHtml(ev.title || "Untitled")}</strong>
+              <span class="meta">${escapeHtml(typeLab)} · ${escapeHtml(when)}${ev.location ? " · " + escapeHtml(ev.location) : ""}</span>
+            </div>
+          </div>
+          <p class="event-script">${escapeHtml(script)}</p>
+          <div class="row-3">
+            <button type="button" class="btn btn-navy" data-act="hear-event" data-eid="${escapeHtml(ev.id)}">Hear it</button>
+            <button type="button" class="btn btn-ok" data-act="practice-event" data-eid="${escapeHtml(ev.id)}">Practice it</button>
+            <button type="button" class="btn btn-gold" data-act="edit-event" data-eid="${escapeHtml(ev.id)}">Edit</button>
+          </div>
+        </div>`;
+      }).join("");
+      const shouts = todaysShoutouts();
+      const shoutList = shouts.map((s) => `<li><strong>${escapeHtml(s.name)}</strong> — ${escapeHtml(s.reason)}
+        <button type="button" class="ghost tiny-x" data-act="delete-shout" data-sid="${escapeHtml(s.id)}" aria-label="Remove">×</button></li>`).join("");
+      const todayBlock = `<div class="announce-all">
+            <p class="progress-label">Today's start-up announcement</p>
+            <p class="event-script">${escapeHtml(daily)}</p>
+            <div class="row-3">
+              <button type="button" class="btn btn-navy" data-act="hear-all">Hear it</button>
+              <button type="button" class="btn btn-ok" data-act="practice-all">Practice it</button>
+              <button type="button" class="btn btn-gold" data-act="share-all">Share</button>
+            </div>
+          </div>`;
+      const prompt = pickSeeded(CONNECTION_PROMPTS, todayStr() + "-prompt");
+      return `${renderBulletinBanner()}
+      <div class="card">
+        <h2>Today's Announcements</h2>
+        ${upcoming.length ? items + todayBlock : `<p class="lead">No upcoming events yet. Scan this month's bulletin, or add one yourself.</p>${today.length || shouts.length || comingUpEvents().length ? todayBlock : todayBlock}`}
+        <p class="progress-label">Shout-outs</p>
+        <p class="tiny">Add a name and why they stood out. I'll weave it into today's script.</p>
+        <ul class="shout-list">${shoutList || "<li class='tiny'>No shout-outs yet today.</li>"}</ul>
+        <div class="row-2">
+          <label>Name<input class="field" id="shout-name" placeholder="Name"></label>
+          <label>Reason<input class="field" id="shout-reason" placeholder="What they did"></label>
+        </div>
+        <button type="button" class="btn btn-ok" data-act="add-shout">Add shout-out</button>
+        <p class="progress-label">Personal touch</p>
+        <p class="tiny">A quick story, a question, or a fun fact. Or use today's prompt: ${escapeHtml(prompt)}</p>
+        <input class="field" id="personal-touch" placeholder="Your personal line" value="${escapeHtml(state.personalTouch || "")}">
+        <div class="row-2">
+          <button type="button" class="btn btn-navy" data-act="use-prompt">Use today's prompt</button>
+          <button type="button" class="btn btn-green" data-act="save-touch">Save line</button>
+        </div>
+        ${scanButtons()}
+        ${addButton()}
+      </div>`;
+    }
+
+    function idbOpen() {
+      return new Promise((resolve, reject) => {
+        if (!window.indexedDB) return reject(new Error("no idb"));
+        const req = indexedDB.open(PHOTO_DB, 1);
+        req.onupgradeneeded = () => {
+          const db = req.result;
+          if (!db.objectStoreNames.contains(PHOTO_STORE)) db.createObjectStore(PHOTO_STORE, { keyPath: "id" });
+        };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+    function idbPut(record) {
+      return idbOpen().then((db) => new Promise((resolve, reject) => {
+        const tx = db.transaction(PHOTO_STORE, "readwrite");
+        tx.objectStore(PHOTO_STORE).put(record);
+        tx.oncomplete = () => resolve(record);
+        tx.onerror = () => reject(tx.error);
+      }));
+    }
+    function idbGet(id) {
+      return idbOpen().then((db) => new Promise((resolve, reject) => {
+        const tx = db.transaction(PHOTO_STORE, "readonly");
+        const req = tx.objectStore(PHOTO_STORE).get(id);
+        req.onsuccess = () => resolve(req.result || null);
+        req.onerror = () => reject(req.error);
+      }));
+    }
+    async function hydrateEventThumbs() {
+      const imgs = document.querySelectorAll("img[data-photo]");
+      for (const img of imgs) {
+        const id = img.getAttribute("data-photo");
+        if (!id) continue;
+        if (photoUrlCache[id]) { img.src = photoUrlCache[id]; continue; }
+        try {
+          const rec = await idbGet(id);
+          const blob = rec && (rec.thumb || rec.blob);
+          if (!blob) continue;
+          const url = URL.createObjectURL(blob);
+          photoUrlCache[id] = url;
+          img.src = url;
+        } catch (e) {}
+      }
+    }
+    function isPdfFile(file) {
+      return (file && file.type === "application/pdf") || /\.pdf$/i.test((file && file.name) || "");
+    }
+    function loadImage(src) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+      });
+    }
+    async function compressImage(file, maxW, quality) {
+      try {
+        const url = URL.createObjectURL(file);
+        const img = await loadImage(url);
+        URL.revokeObjectURL(url);
+        const scale = Math.min(1, maxW / Math.max(1, img.width));
+        const c = document.createElement("canvas");
+        c.width = Math.max(1, Math.round(img.width * scale));
+        c.height = Math.max(1, Math.round(img.height * scale));
+        const ctx = c.getContext("2d");
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(0, 0, c.width, c.height);
+        ctx.drawImage(img, 0, 0, c.width, c.height);
+        const blob = await new Promise((resolve) => c.toBlob(resolve, "image/jpeg", quality));
+        return blob || file;
+      } catch (e) {
+        return file;
+      }
+    }
+    function loadTesseract() {
+      if (window.Tesseract) return Promise.resolve(window.Tesseract);
+      return new Promise((resolve, reject) => {
+        const s = document.createElement("script");
+        s.src = TESSERACT_SRC;
+        s.async = true;
+        s.onload = () => window.Tesseract ? resolve(window.Tesseract) : reject(new Error("Tesseract missing"));
+        s.onerror = () => reject(new Error("Couldn't load the scanner. Check your connection."));
+        document.head.appendChild(s);
+      });
+    }
+
+    const MONTHS = {
+      january: 1, february: 2, march: 3, april: 4, may: 5, june: 6,
+      july: 7, august: 8, september: 9, october: 10, november: 11, december: 12,
+      jan: 1, feb: 2, mar: 3, apr: 4, jun: 6, jul: 7, aug: 8, sep: 9, sept: 9, oct: 10, nov: 11, dec: 12
+    };
+    const WEEKDAYS = { sunday: 0, monday: 1, tuesday: 2, wednesday: 3, thursday: 4, friday: 5, saturday: 6 };
+    function pad2(n) { return String(n).padStart(2, "0"); }
+    function isoFromParts(year, month, day) {
+      return year + "-" + pad2(month) + "-" + pad2(day);
+    }
+    function nextWeekday(now, target) {
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const diff = (target - d.getDay() + 7) % 7;
+      d.setDate(d.getDate() + diff);
+      return isoFromParts(d.getFullYear(), d.getMonth() + 1, d.getDate());
+    }
+    function inferBulletinPeriod(text, events, now) {
+      now = now || new Date();
+      let year = now.getFullYear();
+      let month = now.getMonth() + 1;
+      const header = String(text || "").match(/\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+(\d{4})\b/i);
+      if (header) {
+        month = MONTHS[header[1].toLowerCase()] || month;
+        year = Number(header[2]) || year;
+      }
+      const dated = (events || []).filter((e) => e.date);
+      if (dated.length) {
+        const counts = {};
+        dated.forEach((e) => {
+          const key = e.date.slice(0, 7);
+          counts[key] = (counts[key] || 0) + 1;
+        });
+        let best = "", n = 0;
+        Object.keys(counts).forEach((k) => { if (counts[k] > n) { n = counts[k]; best = k; } });
+        if (best) {
+          year = Number(best.slice(0, 4));
+          month = Number(best.slice(5, 7));
+        }
+      }
+      return { year: year, month: month, ym: year + "-" + pad2(month) };
+    }
+    function extractDateTime(line, now, inferred) {
+      let rest = line;
+      let date = "";
+      let time = "";
+      const today = todayStr();
+      const yearNow = (inferred && inferred.year) || now.getFullYear();
+      const monthNow = (inferred && inferred.month) || (now.getMonth() + 1);
+
+      const todayRe = /\b(today|tomorrow)\b/i;
+      const tm = rest.match(todayRe);
+      if (tm) {
+        date = tm[1].toLowerCase() === "today" ? today : addDays(today, 1);
+        rest = rest.replace(todayRe, " ");
+      }
+      const mdY = rest.match(/\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\.?\s+(\d{1,2})(?:st|nd|rd|th)?(?:,?\s*(\d{4}))?\b/i);
+      if (mdY) {
+        const month = MONTHS[mdY[1].toLowerCase().replace(/\.$/, "")];
+        const day = Number(mdY[2]);
+        const year = mdY[3] ? Number(mdY[3]) : yearNow;
+        if (month) date = isoFromParts(year, month, day);
+        rest = rest.replace(mdY[0], " ");
+      } else {
+        const dMonth = rest.match(/\b(\d{1,2})(?:st|nd|rd|th)?\s+(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\.?(?:,?\s*(\d{4}))?\b/i);
+        if (dMonth) {
+          const month = MONTHS[dMonth[2].toLowerCase().replace(/\.$/, "")];
+          const day = Number(dMonth[1]);
+          const year = dMonth[3] ? Number(dMonth[3]) : yearNow;
+          if (month) date = isoFromParts(year, month, day);
+          rest = rest.replace(dMonth[0], " ");
+        }
+      }
+      const slash = rest.match(/\b(\d{1,2})[\/\-.](\d{1,2})(?:[\/\-.](\d{2,4}))?\b/);
+      if (slash && !date) {
+        const a = Number(slash[1]);
+        const b = Number(slash[2]);
+        let year = slash[3] ? Number(slash[3]) : yearNow;
+        if (year < 100) year += 2000;
+        if (a >= 1 && a <= 12 && b >= 1 && b <= 31) date = isoFromParts(year, a, b);
+        rest = rest.replace(slash[0], " ");
+      }
+      if (!date) {
+        const dayOnly = rest.match(/\b(\d{1,2})(?:st|nd|rd|th)\b/);
+        if (dayOnly && Number(dayOnly[1]) >= 1 && Number(dayOnly[1]) <= 31) {
+          date = isoFromParts(yearNow, monthNow, Number(dayOnly[1]));
+          rest = rest.replace(dayOnly[0], " ");
+        }
+      }
+      if (!date) {
+        const wd = rest.match(/\b(sunday|monday|tuesday|wednesday|thursday|friday|saturday)\b/i);
+        if (wd) {
+          date = nextWeekday(now, WEEKDAYS[wd[1].toLowerCase()]);
+          rest = rest.replace(wd[0], " ");
+        }
+      }
+      const t12 = rest.match(/\b(\d{1,2})(?::(\d{2}))?\s*(a\.?m\.?|p\.?m\.?)\b/i);
+      if (t12) {
+        let h = Number(t12[1]);
+        const m = t12[2] || "00";
+        const ap = t12[3].toLowerCase().replace(/\./g, "");
+        if (ap === "pm" && h < 12) h += 12;
+        if (ap === "am" && h === 12) h = 0;
+        time = pad2(h) + ":" + m;
+        rest = rest.replace(t12[0], " ");
+      } else {
+        const t24 = rest.match(/\b([01]?\d|2[0-3]):([0-5]\d)\b/);
+        if (t24) {
+          time = pad2(Number(t24[1])) + ":" + t24[2];
+          rest = rest.replace(t24[0], " ");
+        }
+      }
+      rest = rest.replace(/^[ \t,;:|–—\-]+|[ \t,;:|–—\-]+$/g, "").replace(/\s+/g, " ").trim();
+      return { date: date, time: time, rest: rest };
+    }
+    function extractLocation(text) {
+      if (!text) return "";
+      const m = text.match(/\b(?:in|at|on)\s+(?:the\s+)?(.{3,60})$/i);
+      if (m) return m[0].trim();
+      const known = text.match(/\b(break\s*room|breakroom|cafeteria|conference room|training room|parking lot|lobby|meeting room|wellness room)\b/i);
+      return known ? known[0] : "";
+    }
+    function parseBulletinText(text, now, inferred) {
+      now = now || new Date();
+      const lines = String(text || "").replace(/\r/g, "").split("\n").map((s) => s.trim());
+      const period = inferred || inferBulletinPeriod(text, [], now);
+      const events = [];
+      let current = null;
+      const flush = () => {
+        if (current && (current.title || current.date || current.time)) events.push(current);
+        current = null;
+      };
+      for (const line of lines) {
+        if (!line) continue;
+        const parsed = extractDateTime(line, now, period);
+        if (parsed.date || parsed.time) {
+          if (current && ((parsed.date && current.date && parsed.date !== current.date) || (parsed.time && current.time && current.title))) flush();
+          if (!current) current = emptyEvent({ source: "scan", type: "event" });
+          if (parsed.date) current.date = parsed.date;
+          if (parsed.time) current.time = parsed.time;
+          if (parsed.rest) {
+            const loc = extractLocation(parsed.rest);
+            if (!current.title) current.title = parsed.rest;
+            else if (loc && !current.location) current.location = loc;
+            else current.notes = [current.notes, parsed.rest].filter(Boolean).join(" ");
+          }
+        } else if (current) {
+          const loc = extractLocation(line);
+          if (loc && !current.location) current.location = loc;
+          else if (!current.title) current.title = line;
+          else current.notes = [current.notes, line].filter(Boolean).join(" ");
+        } else {
+          current = emptyEvent({ source: "scan", type: "event", title: line });
+        }
+      }
+      flush();
+      return events.filter((e) => (e.title && e.title.length > 1) || e.date);
+    }
+    function eventDedupeKey(ev) {
+      const title = (ev.title || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+      return title + "|" + (ev.date || "") + "|" + (ev.time || "");
+    }
+    function dedupeEvents(list) {
+      const seen = {};
+      const out = [];
+      (list || []).forEach((e) => {
+        const k = eventDedupeKey(e);
+        if (!k || k === "||") { out.push(e); return; }
+        if (seen[k]) return;
+        seen[k] = true;
+        out.push(e);
+      });
+      return out;
+    }
+
+    function speakText(text) {
+      if (!text) return;
+      stopSpeech();
+      try {
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = "en-US";
+        const voice = preferVoice();
+        if (voice) u.voice = voice;
+        u.rate = 0.95;
+        speechSynthesis.speak(u);
+      } catch (e) {}
+    }
+    function practiceAnnouncement(script) {
+      announceOverride = script || "";
+      practiceKind = "announce";
+      const words = wordCount(script);
+      practiceSecs = Math.max(30, Math.min(180, Math.round(words / 2.2) + 15));
+      if (practiceSecs > 40 && practiceSecs < 90) practiceSecs = 60;
+      prompt = {
+        id: "announce",
+        title: "Today's announcement",
+        text: "Practice this announcement out loud, with warmth and energy.",
+        hint: "Use the teleprompter, then record and review."
+      };
+      remaining = practiceSecs;
+      running = false;
+      errorMsg = "";
+      clearRecording();
+      clearLiveStats();
+      reviewChecks = {};
+      reviewConf = 0;
+      prompterOffset = 0;
+      screen = "practice";
+      render();
+    }
+    function eventById(id) {
+      return (state.events || []).find((e) => e.id === id) || (eventDrafts || []).find((e) => e.id === id);
+    }
+    function shareText(text) {
+      const t = text || dailyAnnouncementScript();
+      if (navigator.share) {
+        navigator.share({ title: "Today's announcement", text: t }).catch(() => copyText(t));
+      } else copyText(t);
+    }
+    function copyText(t) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(t).then(() => { errorMsg = ""; }).catch(() => {});
+      }
+    }
+
+    function openEventReview(filterId) {
+      eventDrafts = (state.events || [])
+        .filter((e) => e.date && e.date >= todayStr())
+        .map((e) => Object.assign({}, e, { photoIds: (e.photoIds || []).slice() }));
+      if (filterId) {
+        const hit = (state.events || []).find((e) => e.id === filterId);
+        if (hit && !eventDrafts.some((e) => e.id === filterId)) eventDrafts.unshift(Object.assign({}, hit));
+      }
+      if (!eventDrafts.length) eventDrafts = [emptyEvent({ date: todayStr(), source: "manual" })];
+      screen = "events-review";
+      render();
+    }
+    function openAddForm(editId) {
+      const ev = editId ? eventById(editId) : null;
+      addForm = ev ? Object.assign({}, ev) : emptyEvent({ date: todayStr(), source: "manual", type: "event" });
+      addForm.source = ev && ev.source ? ev.source : "manual";
+      screen = "events-add";
+      render();
+    }
+
+    function monthHasScanned(ym) {
+      return (state.events || []).some((e) => e.source === "scan" && e.date && e.date.startsWith(ym));
+    }
+
+    async function processBulletinFiles(fileList) {
+      const files = Array.from(fileList || []);
+      if (!files.length) return;
+      const pdfs = files.filter(isPdfFile);
+      const images = files.filter((f) => !isPdfFile(f));
+      let warning = "";
+      if (pdfs.length && !images.length) {
+        warning = "PDFs can't be read here. Please upload a photo or screenshot of the bulletin instead.";
+        scanProgress = { pct: 1, label: "PDF not supported", thumbs: [], warning: warning };
+        eventDrafts = [];
+        bulletinMonth = todayStr().slice(0, 7);
+        bulletinReplace = true;
+        screen = "events-confirm";
+        render();
+        return;
+      }
+      if (pdfs.length) warning = "A PDF was skipped. Please upload a photo or screenshot of the bulletin instead.";
+
+      screen = "events-scan";
+      scanProgress = { pct: 0, label: "Preparing photos…", thumbs: [], warning: warning };
+      render();
+
+      const stored = [];
+      const previewUrls = [];
+      for (const file of images) {
+        const blob = await compressImage(file, 1600, 0.72);
+        const thumb = await compressImage(file, 240, 0.7);
+        const rec = { id: newId("p_"), blob: blob, thumb: thumb, created: Date.now(), name: file.name || "" };
+        try { await idbPut(rec); } catch (e) {}
+        stored.push(rec);
+        if (thumb) previewUrls.push(URL.createObjectURL(thumb));
+      }
+      scanProgress.thumbs = previewUrls;
+      render();
+
+      let text = "";
+      let ocrFailed = false;
+      if (stored.length) {
+        try {
+          scanProgress.label = "Loading the scanner…";
+          scanProgress.pct = 0.05;
+          render();
+          const Tesseract = await loadTesseract();
+          const worker = await Tesseract.createWorker("eng", 1, {
+            logger: (m) => {
+              if (m && m.status === "recognizing text") {
+                scanProgress.pct = 0.1 + 0.85 * (m.progress || 0);
+              }
+            }
+          });
+          const pieces = [];
+          for (let i = 0; i < stored.length; i++) {
+            scanProgress.label = "Reading photo " + (i + 1) + " of " + stored.length + "…";
+            render();
+            const result = await worker.recognize(stored[i].blob || stored[i].thumb);
+            if (result && result.data && result.data.text) pieces.push(result.data.text);
+          }
+          await worker.terminate();
+          text = pieces.join("\n\n");
+        } catch (err) {
+          ocrFailed = true;
+          warning = (warning ? warning + " " : "") + "Couldn't read the text automatically. You can add events yourself, or edit what we found, while looking at the photo.";
+        }
+      }
+
+      const period = inferBulletinPeriod(text, [], new Date());
+      let parsed = parseBulletinText(text, new Date(), period);
+      parsed = dedupeEvents(parsed);
+      const photoIds = stored.map((r) => r.id);
+      parsed.forEach((ev) => {
+        ev.source = "scan";
+        ev.type = ev.type || "event";
+        ev.photoIds = photoIds.slice();
+        if (!ev.date) ev.date = period.ym + "-01";
+      });
+      eventDrafts = parsed;
+      bulletinMonth = period.ym;
+      bulletinReplace = true;
+      scanProgress.pct = 1;
+      scanProgress.label = ocrFailed ? "Add or fix the events, then tap Looks good." : "Check what we found";
+      scanProgress.warning = warning;
+      screen = "events-confirm";
+      render();
+    }
+
+    function applyBulletinSave() {
+      const ym = bulletinMonth || todayStr().slice(0, 7);
+      const incoming = dedupeEvents((eventDrafts || []).filter((e) => (e.title && e.title.trim()) || e.date).map((e) => {
+        const copy = Object.assign({}, e);
+        copy.source = copy.source || "scan";
+        return copy;
+      }));
+      const manualKeep = (state.events || []).filter((e) => e.source === "manual");
+      const otherMonths = (state.events || []).filter((e) => e.source !== "manual" && !(e.date && e.date.startsWith(ym)));
+      let scannedThisMonth = (state.events || []).filter((e) => e.source === "scan" && e.date && e.date.startsWith(ym));
+      if (bulletinReplace) scannedThisMonth = [];
+      const merged = dedupeEvents(manualKeep.concat(otherMonths).concat(scannedThisMonth).concat(incoming));
+      state.events = merged;
+      saveState();
+      scanProgress.warning = "";
+      screen = "home";
+      render();
+    }
+
+    function saveEventDrafts() {
+      const today = todayStr();
+      const past = (state.events || []).filter((e) => e.date && e.date < today);
+      const kept = (eventDrafts || []).filter((e) => (e.title && e.title.trim()) || e.date);
+      state.events = past.concat(kept);
+      saveState();
+      screen = "home";
+      render();
+    }
+    function saveAddForm() {
+      if (!addForm || !(addForm.title && addForm.title.trim())) return;
+      addForm.source = addForm.source || "manual";
+      addForm.title = addForm.title.trim();
+      const others = (state.events || []).filter((e) => e.id !== addForm.id);
+      state.events = others.concat([addForm]);
+      saveState();
+      addForm = null;
+      screen = "home";
+      render();
+    }
+    function addShoutFromForm() {
+      const nameEl = document.getElementById("shout-name");
+      const reasonEl = document.getElementById("shout-reason");
+      const name = nameEl ? nameEl.value.trim() : "";
+      const reason = reasonEl ? reasonEl.value.trim() : "";
+      if (!name) return;
+      state.shoutouts = (state.shoutouts || []).filter((s) => s.date && daysBetween(s.date, todayStr()) < 14);
+      state.shoutouts.push({ id: newId("s_"), name: name, reason: reason || "being a great teammate", date: todayStr() });
+      saveState();
+      render();
+    }
+    function savePersonalTouch(fromPrompt) {
+      if (fromPrompt) state.personalTouch = pickSeeded(CONNECTION_PROMPTS, todayStr() + "-prompt");
+      else {
+        const el = document.getElementById("personal-touch");
+        if (el) state.personalTouch = el.value;
+      }
+      saveState();
+      render();
+    }
+
+
+    function renderBanner() {
+      if (!isIOS() || isStandalone() || installDismissed()) return "";
+      if (isSafari()) {
+        return `<div class="banner" role="status">
+          <div>
+            <p>To add this to your Home Screen, tap Share, then Add to Home Screen.</p>
+          </div>
+          <button class="x" type="button" data-act="dismiss-install" aria-label="Dismiss">×</button>
+        </div>`;
+      }
+      return `<div class="banner" role="status">
+        <div>
+          <p>Please open this in Safari to add it to your Home Screen.</p>
+        </div>
+        <button class="x" type="button" data-act="dismiss-install" aria-label="Dismiss">×</button>
+      </div>`;
+    }
+
+    function chartSvg() {
+      const rows = recentSessions(12);
+      if (rows.length < 2) {
+        return `<p class="tiny" style="margin-top:8px">A simple WPM and filler trend appears after a few scored sessions.</p>`;
+      }
+      const w = 320, h = 110, p = 8;
+      const wpmMax = Math.max(200, ...rows.map((r) => r.wpm || 0));
+      const filMax = Math.max(6, ...rows.map((r) => r.fillers || 0));
+      function pts(key, max) {
+        return rows.map((r, i) => {
+          const x = p + (i * (w - p * 2)) / (rows.length - 1);
+          const val = r[key] == null ? 0 : r[key];
+          const y = h - p - (val / max) * (h - p * 2);
+          return x.toFixed(1) + "," + y.toFixed(1);
+        }).join(" ");
+      }
+      return `<div class="chart-wrap" aria-hidden="true">
+        <svg viewBox="0 0 ${w} ${h}" role="img">
+          <line x1="${p}" y1="${(h-p) - ((145/wpmMax)*(h-p*2))}" x2="${w-p}" y2="${(h-p) - ((145/wpmMax)*(h-p*2))}" stroke="#E6DFD2" stroke-width="1" stroke-dasharray="4 4"/>
+          <polyline fill="none" stroke="#0F2F59" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" points="${pts("wpm", wpmMax)}"/>
+          <polyline fill="none" stroke="#C8962E" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" points="${pts("fillers", filMax)}"/>
+        </svg>
+        <div class="chart-legend"><span><i class="dot-navy"></i>WPM</span><span><i class="dot-gold"></i>Fillers</span></div>
+      </div>`;
+    }
+
+    function renderHome() {
+      const dayI = currentDayIndex();
+      const done = completedCount();
+      const pct = Math.round((done / LESSONS.length) * 100);
+      const badges = earnedBadges();
+      const badgeHtml = BADGES.map((b) => {
+        const on = badges.some((x) => x.id === b.id);
+        return `<span class="badge${on ? "" : " off"}">${escapeHtml(b.label)}</span>`;
+      }).join("");
+      const startLabel = !state.guidedDone
+        ? `Start the first lesson`
+        : done >= LESSONS.length
+          ? `Practice again`
+          : `Today's lesson<span class="en">Day ${dayI + 1} of 30</span>`;
+      const avgWpm = (() => {
+        const rows = state.sessions.filter((s) => s.wpm);
+        if (!rows.length) return "—";
+        return String(Math.round(rows.reduce((a, s) => a + s.wpm, 0) / rows.length));
+      })();
+      const lcDone = LEADERSHIP.filter((l) => state.completedDays[l.id]).length;
+      return `${renderBanner()}
+        <div class="brand">
+          <img src="icon-192.png" width="64" height="64" alt="">
+          <h1>Public Speaking Coach</h1>
+        </div>
+        <p class="lead">Short lessons, a timer, and recording to build a confident AFE start-up — and a stronger connection with your team.</p>
+        <div class="progress-card">
+          <p class="progress-label">Day ${Math.min(done + (done >= 30 ? 0 : 1), 30)} of 30 · ${done} lessons done</p>
+          <div class="bar" aria-hidden="true"><i style="width:${pct}%"></i></div>
+          <div class="stats-row">
+            <div class="stat"><b>${state.streak}</b><span>Streak</span></div>
+            <div class="stat"><b>${state.sessions.length}</b><span>Sessions</span></div>
+            <div class="stat"><b>${escapeHtml(avgWpm)}</b><span>Avg WPM</span></div>
+          </div>
+          ${chartSvg()}
+          <div class="badges">${badgeHtml}</div>
+        </div>
+        <button type="button" class="start" data-act="start">${startLabel}</button>
+        <button type="button" class="start navy" data-act="drive-entry">Drive Mode<span class="en">Hands-free audio practice</span></button>
+        ${renderAnnouncementsCard()}
+        <button type="button" class="btn btn-gold" data-act="leadership">Leadership & Connection<span class="en">${lcDone} of ${LEADERSHIP.length} lessons</span></button>
+        <div class="row-2">
+          <button type="button" class="btn btn-ok" data-act="lessons">Lessons</button>
+          <button type="button" class="btn btn-navy" data-act="practice-pick">Practice</button>
+        </div>
+        <div class="row-2">
+          <button type="button" class="btn btn-gold" data-act="breathe">Breathe</button>
+          <button type="button" class="btn btn-green" data-act="script-edit">My start-up</button>
+        </div>
+        <p class="tiny">The mic and speech recognition stay on this device.</p>`;
+    }
+
+    function renderLessons() {
+      const list = LESSONS.map((l, i) => {
+        const done = !!state.completedDays[l.id];
+        return `<button type="button" class="lesson-btn" data-act="open-lesson" data-i="${i}">
+          <span><strong>Day ${i + 1}. ${escapeHtml(l.title)}</strong>
+          <span class="meta">${done ? "Completed" : "Tap to open"}</span></span>
+          <span class="check${done ? "" : " empty"}">${done ? "✓" : (i + 1)}</span>
+        </button>`;
+      }).join("");
+      return `<div class="topbar">
+          <button type="button" class="ghost" data-act="home">Home</button>
+        </div>
+        <h2>30-day program</h2>
+        ${list}`;
+    }
+
+    function renderLeadership() {
+      const list = LEADERSHIP.map((l, i) => {
+        const done = !!state.completedDays[l.id];
+        return `<button type="button" class="lesson-btn" data-act="open-lead" data-i="${i}">
+          <span><strong>${i + 1}. ${escapeHtml(l.title)}</strong>
+          <span class="meta">${done ? "Completed" : "Tap to open"}</span></span>
+          <span class="check${done ? "" : " empty"}">${done ? "✓" : (i + 1)}</span>
+        </button>`;
+      }).join("");
+      return `<div class="topbar">
+          <button type="button" class="ghost" data-act="home">Home</button>
+        </div>
+        <h2>Leadership & Connection</h2>
+        <p class="lead">Build trust, use names, listen well, and recognize people in a way that lands.</p>
+        ${list}`;
+    }
+
+    function renderLesson() {
+      const fromLead = lessonTrack === "leadership";
+      const l = fromLead ? LEADERSHIP[lessonIndex] : LESSONS[lessonIndex];
+      const kicker = !fromLead && !state.guidedDone && lessonIndex === 0
+        ? `<p class="step-kicker">Step 1: Read this short lesson</p>`
+        : `<p class="step-kicker">${fromLead ? "Leadership & Connection" : "Day " + (lessonIndex + 1) + " of 30"}</p>`;
+      return `<div class="topbar">
+          <button type="button" class="ghost" data-act="${fromLead ? "leadership" : "home"}">Back</button>
+        </div>
+        ${kicker}
+        <h2>${escapeHtml(l.title)}</h2>
+        <div class="lesson-body">
+          <p>${escapeHtml(l.body)}</p>
+        </div>
+        <button type="button" class="start" data-act="lesson-practice">Practice this</button>
+        ${!fromLead && l.drill === "breathe" ? `<button type="button" class="btn btn-gold" data-act="breathe">Breathe first</button>` : ""}`;
+    }
+
+    function renderPracticePick() {
+      return `<div class="topbar">
+          <button type="button" class="ghost" data-act="home">Home</button>
+        </div>
+        <p class="instr">What do you want to practice?</p>
+        <button type="button" class="btn btn-navy" data-act="pick-kind" data-k="afe">AFE start-up<span class="en">Safety, CPT, shout-out</span></button>
+        <button type="button" class="btn btn-ok" data-act="pick-kind" data-k="impromptu">Impromptu topics</button>
+        <button type="button" class="btn btn-green" data-act="pick-kind" data-k="myscript">My start-up<span class="en">Teleprompter with your script</span></button>
+        <p class="instr" style="margin-top:18px">How long?</p>
+        <div class="chip-row">
+          <button type="button" class="chip${practiceSecs===30?" on":""}" data-act="secs" data-s="30">30s</button>
+          <button type="button" class="chip${practiceSecs===60?" on":""}" data-act="secs" data-s="60">1 min</button>
+          <button type="button" class="chip${practiceSecs===180?" on":""}" data-act="secs" data-s="180">3 min</button>
+        </div>
+        <p class="tiny">Pick a time, then tap a practice type.</p>`;
+    }
+
+    function formatTime(sec) {
+      const s = Math.max(0, Math.ceil(sec));
+      const m = Math.floor(s / 60);
+      const r = s % 60;
+      return m + ":" + String(r).padStart(2, "0");
+    }
+
+    function renderPractice() {
+      const t = prompt || { text: "Speak now.", title: "Practice", hint: "" };
+      const recLabel = recording ? "Stop recording" : "Record";
+      const statsHtml = stats ? `<div class="stat-grid">
+          <div class="stat"><b>${Math.round(stats.duration)}s</b><span>Time</span></div>
+          <div class="stat"><b>${stats.wpm || "—"}</b><span>WPM · target 130–160</span></div>
+          <div class="stat"><b>${stats.hasSpeech ? stats.fillers : "—"}</b><span>Fillers</span></div>
+          <div class="stat"><b>${stats.pause ? stats.pause.toFixed(1) + "s" : "—"}</b><span>Longest pause</span></div>
+        </div>` : "";
+      const srNote = srSupported
+        ? ""
+        : `<p class="tiny">Live transcript isn't available here (common on iPhone Safari). You'll score yourself after.</p>`;
+      const trans = srSupported && (liveTranscript || (stats && stats.transcript))
+        ? `<div class="transcript">${escapeHtml(liveTranscript || stats.transcript)}</div>`
+        : "";
+      const showPrompter = practiceKind === "myscript" || practiceKind === "announce";
+      const prompter = showPrompter ? renderPrompterBox() : "";
+      const title = t.title || t.titleEn || "Practice";
+      const hint = t.hint || t.hintNe || "";
+      return `<div class="topbar">
+          <button type="button" class="ghost" data-act="${practiceKind === "announce" ? "home" : "practice-pick"}">Back</button>
+        </div>
+        <p class="step-kicker">${escapeHtml(title)}</p>
+        <div class="prompt-card">
+          <p class="kicker">${practiceKind === "impromptu" ? "IMPROMPTU" : practiceKind === "myscript" ? "MY START-UP" : practiceKind === "announce" ? "ANNOUNCEMENT" : "AFE"}</p>
+          <p class="text">${escapeHtml(t.text)}</p>
+          ${hint ? `<p class="hint">${escapeHtml(hint)}</p>` : ""}
+        </div>
+        ${prompter}
+        <div class="timer${remaining <= 5 && running ? " hot" : ""}">${formatTime(remaining)}</div>
+        ${!running && remaining === practiceSecs
+          ? `<button type="button" class="start" data-act="timer-start">Start the timer</button>`
+          : `<button type="button" class="btn ${running ? "btn-gold" : "btn-navy"}" data-act="${running ? "timer-stop" : "timer-start"}">${running ? "Stop" : "Start again"}</button>`}
+        ${errorMsg ? `<p class="error">${escapeHtml(errorMsg)}</p>` : ""}
+        ${trans}
+        ${statsHtml}
+        ${srNote}
+        <div class="row-2">
+          <button type="button" class="btn btn-red${recording ? " rec-on" : ""}" data-act="record">${recLabel}</button>
+          <button type="button" class="btn btn-ok" data-act="play-me" ${recUrl ? "" : "disabled"}>Play me back</button>
+        </div>
+        <button type="button" class="next" data-act="to-review" ${running ? "disabled" : ""}>Self-review</button>`;
+    }
+
+    function renderPrompterBox() {
+      const lines = scriptSections(prompterText());
+      if (!lines.length) {
+        return `<p class="tiny">Add your script first.</p>
+          <button type="button" class="btn btn-green" data-act="script-edit">Write script</button>`;
+      }
+      const html = lines.map((ln, i) => `<p class="${i === 0 ? "on" : ""}">${escapeHtml(ln)}</p>`).join("");
+      return `<div class="prompter" id="prompter"><div class="track" id="prompter-track" style="transform:translateY(-${prompterOffset}px)">${html}</div></div>
+        <div class="speed-row">
+          <button type="button" class="btn btn-navy" style="min-height:56px;margin:0;font-size:20px" data-act="speed" data-d="-8">Slower</button>
+          <div class="lbl">Scroll ${state.scrollSpeed}<span class="en">Speed</span></div>
+          <button type="button" class="btn btn-navy" style="min-height:56px;margin:0;font-size:20px" data-act="speed" data-d="8">Faster</button>
+        </div>`;
+    }
+
+    function renderReview() {
+      const st = stats;
+      const statsHtml = st && st.hasSpeech ? `<div class="stat-grid">
+          <div class="stat"><b>${Math.round(st.duration)}s</b><span>Time</span></div>
+          <div class="stat"><b>${st.wpm || "—"}</b><span>WPM · 130–160</span></div>
+          <div class="stat"><b>${st.fillers}</b><span>Fillers</span></div>
+          <div class="stat"><b>${st.pause ? st.pause.toFixed(1) + "s" : "—"}</b><span>Longest pause</span></div>
+        </div>
+        ${st.transcript ? `<div class="transcript">${escapeHtml(st.transcript)}</div>` : ""}`
+        : `<p class="lead">Score yourself. Automatic stats may be unavailable on this phone.</p>`;
+      const items = CHECKS.map((c) => {
+        const on = !!reviewChecks[c.id];
+        return `<button type="button" class="check-item${on ? " on" : ""}" data-act="toggle-check" data-c="${c.id}">
+          <span><strong>${escapeHtml(c.label)}</strong></span>
+          <span class="check${on ? "" : " empty"}">${on ? "✓" : ""}</span>
+        </button>`;
+      }).join("");
+      const conf = [1,2,3,4,5].map((n) =>
+        `<button type="button" class="conf${reviewConf===n?" on":""}" data-act="conf" data-v="${n}">${n}</button>`
+      ).join("");
+      return `<div class="topbar">
+          <button type="button" class="ghost" data-act="back-practice">Back</button>
+        </div>
+        <h2>Self-review</h2>
+        ${statsHtml}
+        <p class="progress-label">I did this well</p>
+        ${items}
+        <p class="progress-label">Confidence, 1 to 5</p>
+        <div class="conf-row">${conf}</div>
+        <button type="button" class="start" data-act="save-review" ${reviewConf ? "" : "disabled"}>Save and finish</button>`;
+    }
+
+    function renderScriptEdit() {
+      return `<div class="topbar">
+          <button type="button" class="ghost" data-act="home">Home</button>
+        </div>
+        <h2>My start-up script</h2>
+        <p class="lead">Type or paste your script. Practice shows it like a teleprompter.</p>
+        <textarea class="script" id="script-box" placeholder="Good morning, AFE...">${escapeHtml(scriptDraft)}</textarea>
+        <button type="button" class="btn btn-green" data-act="save-script">Save script</button>
+        <button type="button" class="btn btn-navy" data-act="practice-script">Practice with this</button>`;
+    }
+
+    function renderBreathe() {
+      const lab = breatheNames(breathePhase);
+      const cls = breathePhaseClass(breathePhase);
+      return `<div class="topbar">
+          <button type="button" class="ghost" data-act="home">Home</button>
+        </div>
+        <h2>Box breathing</h2>
+        <p class="lead">In for 4, hold 4, out 4, hold 4.</p>
+        <div class="breathe-stage">
+          <div class="breathe-box ${cls}"></div>
+          <div class="breathe-label">${escapeHtml(lab)}</div>
+          <div class="breathe-count">${breatheRunning ? breatheCount : "4"}</div>
+          ${breatheRunning ? `<p class="status">Round ${breatheRound} of 3</p>` : ""}
+        </div>
+        <button type="button" class="start" data-act="${breatheRunning ? "breathe-stop" : "breathe-start"}">${breatheRunning ? "Stop" : "Start 3 rounds"}</button>`;
+    }
+
+    function renderDriveNotice() {
+      return `<div class="topbar">
+          <button type="button" class="ghost" data-act="home">Home</button>
+        </div>
+        <h2>Drive Mode</h2>
+        <div class="warn">
+          <p>Set up before driving. Don't look at or touch the phone while driving.</p>
+        </div>
+        <p class="lead">The app speaks a tip, a prompt, and feedback. You just talk. About 15–20 minutes.</p>
+        <p class="tiny">Keep the screen on if you can. iPhone may pause audio if the screen locks.</p>
+        <button type="button" class="start navy" data-act="drive-start">I'm ready. Start Drive Mode</button>`;
+    }
+
+    function renderDrive() {
+      const d = drive || {};
+      const paused = !!(d.paused);
+      const step = d.stepText || "Get ready";
+      const sub = d.stepSub || "";
+      return `<div class="drive-wrap" data-act="drive-toggle">
+          <div class="drive-step">${escapeHtml(step)}${sub ? `<span class="drive-sub">${escapeHtml(sub)}</span>` : ""}</div>
+          <button type="button" class="drive-hit${paused ? " paused" : ""}" data-act="drive-toggle">
+            ${paused ? `Resume` : `Pause<span class="en">Tap anywhere</span>`}
+          </button>
+          ${paused ? `<button type="button" class="drive-end" data-act="drive-end">End session</button>` : ""}
+        </div>`;
+    }
+
+    function renderDriveDone() {
+      const n = (drive && drive.sessionStats && drive.sessionStats.length) || 0;
+      return `<div class="card done-card">
+          <h2>Session complete</h2>
+          <p class="lead">${n} drills were logged. Arrive safely.</p>
+          <button type="button" class="start" data-act="home">Home</button>
+        </div>`;
+    }
+
+    function renderSaved() {
+      return `<div class="card done-card">
+          <h2>Nice work</h2>
+          <p class="lead">Your practice was saved. You can go again if you want.</p>
+          <button type="button" class="start" data-act="home">Home</button>
+          <button type="button" class="btn btn-navy" data-act="practice-pick">Another drill</button>
+        </div>`;
+    }
+
+    function renderEventsScan() {
+      const p = scanProgress || { pct: 0, label: "Working…", warning: "" };
+      const thumbs = (p.thumbs || []).map((src) => `<img src="${src}" alt="">`).join("");
+      return `<div class="topbar">
+          <button type="button" class="ghost" data-act="home">Home</button>
+        </div>
+        <h2>Reading the bulletin</h2>
+        <p class="lead">${escapeHtml(p.label || "Working…")}</p>
+        <div class="ocr-bar"><i style="width:${Math.round((p.pct || 0) * 100)}%"></i></div>
+        ${thumbs ? `<div class="thumb-row">${thumbs}</div>` : ""}
+        ${p.warning ? `<div class="warn"><p>${escapeHtml(p.warning)}</p></div>` : ""}`;
+    }
+
+    function renderEventsConfirm() {
+      const list = (eventDrafts || []).map((ev) => {
+        const when = [formatPrettyDate(ev.date), formatPrettyTime(ev.time)].filter(Boolean).join(" · ");
+        return `<div class="event-item">
+          <strong>${escapeHtml(ev.title || "Untitled")}</strong>
+          <span class="meta">${escapeHtml(when)}${ev.location ? " · " + escapeHtml(ev.location) : ""}</span>
+          <p class="event-script">${escapeHtml(getEventScript(ev))}</p>
+        </div>`;
+      }).join("");
+      const warn = (scanProgress && scanProgress.warning) ? `<div class="warn"><p>${escapeHtml(scanProgress.warning)}</p></div>` : "";
+      const ym = bulletinMonth || todayStr().slice(0, 7);
+      const hasExisting = monthHasScanned(ym);
+      const replaceBlock = hasExisting ? `<div class="card">
+          <p class="progress-label">New month bulletin for ${escapeHtml(monthLabel(ym))}</p>
+          <p class="lead">Replace this month's scanned events? Manual events you added yourself will be kept.</p>
+          <div class="chip-row">
+            <button type="button" class="chip${bulletinReplace ? " on" : ""}" data-act="bulletin-replace" data-v="1">Replace</button>
+            <button type="button" class="chip${!bulletinReplace ? " on" : ""}" data-act="bulletin-replace" data-v="0">Merge</button>
+          </div>
+        </div>` : "";
+      return `<div class="topbar">
+          <button type="button" class="ghost" data-act="home">Home</button>
+        </div>
+        <h2>Looks right?</h2>
+        <p class="lead">We generated your announcement scripts automatically. You can edit later if you want.</p>
+        ${warn}
+        ${replaceBlock}
+        ${list || `<p class="tiny">No events were found. Add one, or take another photo.</p>`}
+        <button type="button" class="start" data-act="looks-good">Looks good</button>
+        <button type="button" class="btn btn-navy" data-act="edit-events">Edit</button>
+        ${addButton()}
+        ${scanButtons()}`;
+    }
+
+    function renderEventsReview() {
+      const list = (eventDrafts || []).map((ev, i) => {
+        const thumb = (ev.photoIds && ev.photoIds[0])
+          ? `<img class="evt-thumb" data-photo="${escapeHtml(ev.photoIds[0])}" alt="">`
+          : "";
+        const types = EVENT_TYPES.map((t) => `<button type="button" class="chip${ev.type===t.id?" on":""}" data-act="draft-type" data-eid="${escapeHtml(ev.id)}" data-v="${t.id}">${escapeHtml(t.label)}</button>`).join("");
+        const script = getEventScript(ev);
+        return `<div class="event-edit" data-eid="${escapeHtml(ev.id)}">
+          <div class="event-edit-top">${thumb}<strong>Event ${i + 1}</strong>
+            <button type="button" class="ghost" data-act="delete-event" data-eid="${escapeHtml(ev.id)}">Delete</button>
+          </div>
+          <label>Title<input class="field" data-efield="title" data-eid="${escapeHtml(ev.id)}" value="${escapeHtml(ev.title || "")}"></label>
+          <div class="row-2">
+            <label>Date<input class="field" type="date" data-efield="date" data-eid="${escapeHtml(ev.id)}" value="${escapeHtml(ev.date || "")}"></label>
+            <label>Time<input class="field" type="time" data-efield="time" data-eid="${escapeHtml(ev.id)}" value="${escapeHtml(ev.time || "")}"></label>
+          </div>
+          <label>Location<input class="field" data-efield="location" data-eid="${escapeHtml(ev.id)}" value="${escapeHtml(ev.location || "")}"></label>
+          <label>Notes<input class="field" data-efield="notes" data-eid="${escapeHtml(ev.id)}" value="${escapeHtml(ev.notes || "")}"></label>
+          <p class="progress-label">Type</p>
+          <div class="chip-row wrap-chips">${types}</div>
+          <label>Announcement script<textarea class="script field-script" data-efield="scriptCustom" data-eid="${escapeHtml(ev.id)}" placeholder="Leave blank to use the auto script">${escapeHtml(ev.scriptCustom || script)}</textarea></label>
+          <button type="button" class="btn btn-ok" data-act="reset-script" data-eid="${escapeHtml(ev.id)}">Reset to auto</button>
+        </div>`;
+      }).join("");
+      return `<div class="topbar">
+          <button type="button" class="ghost" data-act="home">Home</button>
+        </div>
+        <h2>Edit events</h2>
+        <p class="lead">Fix details or the script, then save. + Add a manual event anytime.</p>
+        ${list || `<p class="tiny">No events yet.</p>`}
+        ${addButton()}
+        <button type="button" class="start" data-act="save-events">Save events</button>
+        ${scanButtons()}`;
+    }
+
+    function renderEventsAdd() {
+      const ev = addForm || emptyEvent({ date: todayStr(), source: "manual" });
+      const types = EVENT_TYPES.map((t) => `<button type="button" class="chip${ev.type===t.id?" on":""}" data-act="add-type" data-v="${t.id}">${escapeHtml(t.label)}</button>`).join("");
+      const preview = ev.title ? `<p class="event-script">${escapeHtml(getEventScript(ev))}</p>` : "";
+      return `<div class="topbar">
+          <button type="button" class="ghost" data-act="home">Home</button>
+        </div>
+        <h2>${ev.created && eventById(ev.id) && (state.events || []).some((e) => e.id === ev.id) ? "Edit event" : "Add event"}</h2>
+        <p class="lead">No bulletin needed. Title and date are enough. I'll write the announcement for you.</p>
+        <label>Title (required)<input class="field" id="add-title" value="${escapeHtml(ev.title || "")}" placeholder="Thanksgiving potluck"></label>
+        <div class="row-2">
+          <label>Date<input class="field" type="date" id="add-date" value="${escapeHtml(ev.date || todayStr())}"></label>
+          <label>Time (optional)<input class="field" type="time" id="add-time" value="${escapeHtml(ev.time || "")}"></label>
+        </div>
+        <label>Location<input class="field" id="add-location" value="${escapeHtml(ev.location || "")}" placeholder="Breakroom"></label>
+        <label>Notes<input class="field" id="add-notes" value="${escapeHtml(ev.notes || "")}"></label>
+        <p class="progress-label">Type</p>
+        <div class="chip-row wrap-chips">${types}</div>
+        <p class="progress-label">Auto script preview</p>
+        ${preview || `<p class="tiny">Add a title to see the script.</p>`}
+        <label>Customize script (optional)<textarea class="script field-script" id="add-script" placeholder="Leave blank to keep the auto script">${escapeHtml(ev.scriptCustom || "")}</textarea></label>
+        ${ev.scriptCustom ? `<button type="button" class="btn btn-ok" data-act="add-reset-script">Reset to auto</button>` : ""}
+        <button type="button" class="start" data-act="save-add">Save event</button>`;
+    }
+
+    function render() {
+      const root = document.getElementById("app");
+      const driving = screen === "drive";
+      document.body.classList.toggle("drive-on", driving);
+      setTheme(driving ? "#0B1220" : "#0F2F59");
+      if (screen === "home") root.innerHTML = renderHome();
+      else if (screen === "lessons") root.innerHTML = renderLessons();
+      else if (screen === "leadership") root.innerHTML = renderLeadership();
+      else if (screen === "lesson") root.innerHTML = renderLesson();
+      else if (screen === "practice-pick") root.innerHTML = renderPracticePick();
+      else if (screen === "practice") root.innerHTML = renderPractice();
+      else if (screen === "review") root.innerHTML = renderReview();
+      else if (screen === "script") root.innerHTML = renderScriptEdit();
+      else if (screen === "breathe") root.innerHTML = renderBreathe();
+      else if (screen === "drive-notice") root.innerHTML = renderDriveNotice();
+      else if (screen === "drive") root.innerHTML = renderDrive();
+      else if (screen === "drive-done") root.innerHTML = renderDriveDone();
+      else if (screen === "saved") root.innerHTML = renderSaved();
+      else if (screen === "events-scan") root.innerHTML = renderEventsScan();
+      else if (screen === "events-confirm") root.innerHTML = renderEventsConfirm();
+      else if (screen === "events-review") root.innerHTML = renderEventsReview();
+      else if (screen === "events-add") root.innerHTML = renderEventsAdd();
+      else root.innerHTML = renderHome();
+      hydrateEventThumbs();
+    }
+
+
+    function scriptSections(text) {
+      const raw = (text || "").trim();
+      if (!raw) return [];
+      let parts = raw.split(/\n\s*\n/).map((s) => s.trim()).filter(Boolean);
+      if (parts.length <= 1) {
+        const sentences = raw.split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter(Boolean);
+        if (sentences.length) {
+          parts = [];
+          for (let i = 0; i < sentences.length; i += 2) {
+            parts.push(sentences.slice(i, i + 2).join(" "));
+          }
+        } else {
+          parts = [raw];
+        }
+      }
+      return parts;
+    }
+
+    function pickPrompt(kind, preferredId) {
+      if (kind === "myscript") {
+        const sections = scriptSections(state.myScript);
+        const text = sections.length
+          ? state.myScript
+          : "Good morning, AFE. Safety first today. Then I'll share the plan and close strong.";
+        return {
+          id: "myscript",
+          kind: "myscript",
+          title: "My start-up",
+          text: sections.length ? "Read your script from the teleprompter. Speak it out loud." : text,
+          hint: sections.length ? "Your script will scroll on the screen." : "Write your script first, or use this sample."
+        };
+      }
+      const pool = kind === "impromptu" ? IMPROMPTU : AFE_PROMPTS;
+      if (preferredId) {
+        const found = pool.find((p) => p.id === preferredId);
+        if (found) return found;
+      }
+      let list = pool;
+      if (kind === "afe3") {
+        const full = AFE_PROMPTS.find((p) => p.id === "full-startup");
+        if (full) return full;
+      }
+      return list[Math.floor(Math.random() * list.length)];
+    }
+
+    function stopTimer() {
+      if (timerId) { clearInterval(timerId); timerId = 0; }
+      running = false;
+      stopRecognition();
+      stopPrompter();
+      if (speakStartedAt && !speakEndedAt) speakEndedAt = Date.now();
+    }
+    function startTimer() {
+      stopTimer();
+      clearLiveStats();
+      remaining = practiceSecs;
+      running = true;
+      speakStartedAt = Date.now();
+      speakEndedAt = 0;
+      stats = null;
+      liveTranscript = "";
+      finalTranscript = "";
+      startRecognition(() => {
+        if (screen === "practice") {
+          const el = document.querySelector(".transcript");
+          if (el) el.textContent = liveTranscript;
+        }
+      });
+      if (practiceKind === "myscript" || practiceKind === "announce") startPrompter();
+      render();
+      timerId = setInterval(() => {
+        if (!running) return;
+        remaining = Math.max(0, remaining - 0.2);
+        const tEl = document.querySelector(".timer");
+        if (tEl) {
+          tEl.textContent = formatTime(remaining);
+          tEl.classList.toggle("hot", remaining <= 5);
+        }
+        if (remaining <= 0) finishTimer();
+      }, 200);
+    }
+    function finishTimer() {
+      stopTimer();
+      remaining = 0;
+      speakEndedAt = Date.now();
+      if (srSupported) stats = computeStats();
+      render();
+    }
+    function clearLiveStats() {
+      liveTranscript = "";
+      finalTranscript = "";
+      speechEvents = [];
+      stats = null;
+    }
+
+    function startPrompter() {
+      stopPrompter();
+      prompterOn = true;
+      prompterOffset = 0;
+      let last = performance.now();
+      const tick = (now) => {
+        if (!prompterOn) return;
+        const dt = Math.min(0.05, (now - last) / 1000);
+        last = now;
+        prompterOffset += (state.scrollSpeed || 40) * dt;
+        const track = document.getElementById("prompter-track");
+        const box = document.getElementById("prompter");
+        if (track && box) {
+          const max = Math.max(0, track.scrollHeight - box.clientHeight);
+          if (prompterOffset > max) prompterOffset = max;
+          track.style.transform = "translateY(-" + prompterOffset + "px)";
+          const mid = box.clientHeight / 2;
+          const ps = track.querySelectorAll("p");
+          ps.forEach((p) => {
+            const r = p.getBoundingClientRect();
+            const br = box.getBoundingClientRect();
+            const cy = r.top + r.height / 2 - br.top;
+            p.classList.toggle("on", Math.abs(cy - mid) < r.height);
+          });
+        }
+        prompterRaf = requestAnimationFrame(tick);
+      };
+      prompterRaf = requestAnimationFrame(tick);
+    }
+    function stopPrompter() {
+      prompterOn = false;
+      if (prompterRaf) cancelAnimationFrame(prompterRaf);
+      prompterRaf = 0;
+    }
+
+    function openPractice(kind, secs, fromLesson) {
+      announceOverride = "";
+      if (kind !== "leadership") lessonTrack = lessonTrack || "core";
+      practiceKind = kind === "afe3" ? "afe" : (kind || "afe");
+      if (secs) practiceSecs = secs;
+      if (fromLesson && LESSONS[lessonIndex]) {
+        if (LESSONS[lessonIndex].drill === "afe3") practiceSecs = 180;
+        if (LESSONS[lessonIndex].drill === "myscript" && !scriptSections(state.myScript).length) {
+          practiceKind = "afe";
+        } else if (LESSONS[lessonIndex].drill === "myscript") {
+          practiceKind = "myscript";
+        } else if (LESSONS[lessonIndex].drill === "impromptu") {
+          practiceKind = "impromptu";
+        } else if (LESSONS[lessonIndex].drill === "breathe") {
+          practiceKind = "afe";
+        }
+      }
+      prompt = pickPrompt(kind === "afe3" ? "afe3" : practiceKind);
+      remaining = practiceSecs;
+      running = false;
+      errorMsg = "";
+      clearRecording();
+      clearLiveStats();
+      reviewChecks = {};
+      reviewConf = 0;
+      prompterOffset = 0;
+      screen = "practice";
+      render();
+    }
+
+    function openLesson(i) {
+      stopAllSoft();
+      lessonIndex = i;
+      screen = "lesson";
+      render();
+    }
+
+    function startFromHome() {
+      const i = currentDayIndex();
+      openLesson(i);
+    }
+
+    function stopAllSoft() {
+      stopTimer();
+      stopSpeech();
+      stopBreathe();
+      if (recording && mediaRecorder) {
+        try { mediaRecorder.stop(); } catch (e) {}
+        recording = false;
+      }
+    }
+
+    function goReview() {
+      stopTimer();
+      if (!stats && srSupported && (liveTranscript || finalTranscript)) {
+        speakEndedAt = speakEndedAt || Date.now();
+        stats = computeStats();
+      }
+      reviewChecks = reviewChecks || {};
+      reviewConf = reviewConf || 0;
+      screen = "review";
+      render();
+    }
+
+    function saveReview() {
+      const st = stats || {};
+      logSession({
+        type: "practice",
+        kind: practiceKind,
+        lesson: LESSONS[lessonIndex] ? LESSONS[lessonIndex].id : "",
+        duration: st.duration || (practiceSecs - remaining) || practiceSecs,
+        wpm: st.wpm || 0,
+        fillers: st.hasSpeech ? st.fillers : null,
+        words: st.words || 0,
+        confidence: reviewConf,
+        checks: Object.assign({}, reviewChecks),
+        promptId: prompt && prompt.id
+      });
+      if (lessonTrack === "leadership") {
+        const les = LEADERSHIP[lessonIndex];
+        if (les && !state.completedDays[les.id]) { state.completedDays[les.id] = todayStr(); saveState(); }
+      } else if (LESSONS[lessonIndex]) markDayDone(lessonIndex);
+      if (!state.guidedDone) {
+        state.guidedDone = true;
+        saveState();
+      }
+      screen = "saved";
+      render();
+    }
+
+    function stopBreathe() {
+      breatheRunning = false;
+      if (breatheTimer) { clearInterval(breatheTimer); breatheTimer = 0; }
+    }
+    function breathePhaseClass(phase) {
+      return ["", "in", "hold-in", "out", "hold-out"][Math.max(0, phase)] || "";
+    }
+    function breatheNames(phase) {
+      const names = ["Ready", "Inhale", "Hold", "Exhale", "Hold"];
+      return phase < 0 ? names[0] : names[phase];
+    }
+    function startBreathe() {
+      stopBreathe();
+      breatheRunning = true;
+      breatheRound = 1;
+      breathePhase = 1;
+      breatheCount = 4;
+      render();
+      breatheTimer = setInterval(() => {
+        if (!breatheRunning) return;
+        breatheCount -= 1;
+        let phaseChanged = false;
+        if (breatheCount <= 0) {
+          breathePhase += 1;
+          if (breathePhase > 4) {
+            breathePhase = 1;
+            breatheRound += 1;
+            if (breatheRound > 3) {
+              stopBreathe();
+              breathePhase = -1;
+              render();
+              return;
+            }
+          }
+          breatheCount = 4;
+          phaseChanged = true;
+        }
+        const countEl = document.querySelector(".breathe-count");
+        const labEl = document.querySelector(".breathe-label");
+        const boxEl = document.querySelector(".breathe-box");
+        const stEl = document.querySelector(".breathe-stage .status");
+        if (countEl) countEl.textContent = String(breatheCount);
+        if (labEl) {
+          const lab = breatheNames(breathePhase);
+          labEl.textContent = lab;
+        }
+        if (boxEl && phaseChanged) boxEl.className = "breathe-box " + breathePhaseClass(breathePhase);
+        if (stEl) stEl.textContent = "Round " + breatheRound + " of 3";
+      }, 1000);
+    }
+
+    async function requestWakeLock() {
+      try {
+        if (drive && drive.wakeLock && drive.wakeLock.released === false) return;
+        if (navigator.wakeLock && navigator.wakeLock.request) {
+          const lock = await navigator.wakeLock.request("screen");
+          if (drive) {
+            drive.wakeLock = lock;
+            lock.addEventListener("release", () => {});
+          }
+        }
+      } catch (e) {}
+    }
+    function releaseWakeLock() {
+      try {
+        if (drive && drive.wakeLock) drive.wakeLock.release();
+      } catch (e) {}
+      if (drive) drive.wakeLock = null;
+    }
+
+    function sleep(ms) {
+      return new Promise((r) => setTimeout(r, ms));
+    }
+
+    function buildDriveQueue() {
+      const items = [];
+      const dayI = currentDayIndex();
+      const les = LESSONS[dayI] || LESSONS[0];
+      items.push({ type: "intro" });
+      items.push({ type: "breathe", rounds: 2 });
+      const tips = [
+        les.tip,
+        "Open with a short welcome, then three points: safety, plan, and a shout-out or quality. Close strong.",
+        "If you feel a filler word coming, close your mouth and pause instead.",
+        "Project your voice to the back of the group. Finish every word.",
+        "Pause after numbers, path names, and your opening line."
+      ];
+      const prompts = [
+        AFE_PROMPTS.find((p) => p.id === "full-startup") || AFE_PROMPTS[0],
+        AFE_PROMPTS.find((p) => p.id === "safety-hands"),
+        AFE_PROMPTS.find((p) => p.id === "plan-cpt"),
+        AFE_PROMPTS.find((p) => p.id === "shout-quality"),
+        IMPROMPTU[2],
+        IMPROMPTU[5],
+        IMPROMPTU[Math.floor(Math.random() * IMPROMPTU.length)]
+      ].filter(Boolean);
+
+      const sections = scriptSections(state.myScript);
+      if (sections.length) {
+        sections.slice(0, 2).forEach((sec, i) => {
+          prompts.splice(1 + i, 0, {
+            id: "script-" + i,
+            title: "Your start-up, part " + (i + 1),
+            text: "I'll read part " + (i + 1) + " of your start-up. Then you say it back. Here it is: " + sec,
+            speakExtra: sec,
+            hint: ""
+          });
+        });
+      }
+      const hasAnn = todaysEvents().length || todaysShoutouts().length || comingUpEvents().length || (state.personalTouch || "").trim();
+      if (hasAnn) {
+        const daily = dailyAnnouncementScript();
+        prompts.unshift({
+          id: "announce-today",
+          title: "Today's announcements",
+          text: "Here's today's announcement. Listen, then repeat it in your own words, with the same warmth. " + daily,
+          hint: "Speak to your team, not at them. Use we and us. Thank them for real."
+        });
+        tips.unshift("Speak to your team, not at them. Use we and us. Thank them for real.");
+      }
+      if (prompts.length > 8) prompts.length = 8;
+
+      const usedTips = tips.slice(0, Math.min(tips.length, prompts.length));
+      prompts.forEach((p, i) => {
+        items.push({
+          type: "drill",
+          tip: usedTips[i] || tips[tips.length - 1],
+          prompt: p,
+          seconds: 60
+        });
+      });
+      items.push({ type: "close" });
+      return items;
+    }
+
+    function setDriveStep(text, sub) {
+      if (!drive) return;
+      drive.stepText = text;
+      drive.stepSub = sub || "";
+      if (screen === "drive") {
+        const el = document.querySelector(".drive-step");
+        if (el) {
+          el.innerHTML = escapeHtml(text) + (sub ? `<span class="drive-sub">${escapeHtml(sub)}</span>` : "");
+        } else {
+          render();
+        }
+      }
+    }
+
+    async function waitWhilePaused() {
+      while (drive && drive.running && drive.paused) {
+        await sleep(120);
+      }
+    }
+
+    function speakLine(text) {
+      if (!drive || !drive.running) return Promise.resolve();
+      drive.currentSpeak = text;
+      return new Promise(async (resolve) => {
+        let tries = 0;
+        while (drive && drive.running && tries < 8) {
+          await waitWhilePaused();
+          if (!drive || !drive.running) return resolve();
+          const result = await new Promise((res) => {
+            stopSpeech();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = "en-US";
+            const voice = preferVoice();
+            if (voice) u.voice = voice;
+            u.rate = 0.95;
+            u.pitch = 1;
+            let settled = false;
+            const finish = (why) => {
+              if (settled) return;
+              settled = true;
+              if (drive) drive._cancelSpeak = null;
+              res(why);
+            };
+            if (drive) {
+              drive._cancelSpeak = () => {
+                try { speechSynthesis.cancel(); } catch (e) {}
+                finish("pause");
+              };
+            }
+            u.onend = () => finish("end");
+            u.onerror = () => finish(drive && drive.paused ? "pause" : "error");
+            try { speechSynthesis.speak(u); } catch (e) { finish("error"); }
+          });
+          if (result === "end") return resolve();
+          if (result === "pause") { tries += 1; continue; }
+          return resolve();
+        }
+        resolve();
+      });
+    }
+
+    async function timedWait(ms, opts) {
+      const start = Date.now();
+      let pausedFor = 0;
+      let pauseAt = 0;
+      drive.earlyEnd = false;
+      while (drive && drive.running) {
+        if (drive.paused) {
+          if (!pauseAt) pauseAt = Date.now();
+          await sleep(100);
+          continue;
+        }
+        if (pauseAt) {
+          pausedFor += Date.now() - pauseAt;
+          pauseAt = 0;
+        }
+        const gone = Date.now() - start - pausedFor;
+        const remain = Math.max(0, ms - gone);
+        if (opts && opts.onTick) opts.onTick(remain);
+        if (opts && opts.shouldEnd && opts.shouldEnd()) return "early";
+        if (gone >= ms) return "timeout";
+        await sleep(100);
+      }
+      return "stop";
+    }
+
+    async function runDriveSession() {
+      const items = buildDriveQueue();
+      drive = {
+        running: true,
+        paused: false,
+        items: items,
+        index: 0,
+        stepText: "Starting",
+        stepSub: "Starting",
+        sessionStats: [],
+        wakeLock: null,
+        currentSpeak: "",
+        _cancelSpeak: null,
+        earlyEnd: false
+      };
+      screen = "drive";
+      render();
+      requestWakeLock();
+
+      const go = async () => {
+        for (let i = 0; i < items.length; i++) {
+          if (!drive || !drive.running) return;
+          drive.index = i;
+          const item = items[i];
+          if (item.type === "intro") {
+            setDriveStep("Welcome", "Drive Mode");
+            await speakLine("Welcome to Drive Mode. Keep your eyes on the road. I will coach you by voice. First, a short breathing exercise. Then several one-minute speaking drills. I'll tell you when to talk, and when to rest.");
+          } else if (item.type === "breathe") {
+            setDriveStep("Box breathing");
+            await speakLine("Let's do box breathing for two rounds. I will count. Inhale for four, hold for four, exhale for four, hold for four.");
+            const names = ["Inhale", "Hold", "Exhale", "Hold"];
+            for (let r = 1; r <= (item.rounds || 2); r++) {
+              for (let p = 0; p < 4; p++) {
+                if (!drive.running) return;
+                setDriveStep(names[p] + " · round " + r, "Box breathing");
+                await speakLine(names[p] + ". Two. Three. Four.");
+              }
+            }
+            await speakLine("Nice. Shoulders down. Let's begin the speaking practice.");
+          } else if (item.type === "drill") {
+            setDriveStep("Listen to the tip");
+            await speakLine("Here's a short tip. " + item.tip);
+            setDriveStep("Your prompt");
+            await speakLine("Here is your prompt. " + item.prompt.text);
+            setDriveStep("Ready…");
+            await speakLine("Ready. Go. I'll be quiet while you speak.");
+            if (!drive.running) return;
+            liveTranscript = "";
+            finalTranscript = "";
+            speechEvents = [];
+            speakStartedAt = Date.now();
+            speakEndedAt = 0;
+            lastSpeechAt = 0;
+            const startedTalking = { on: false };
+            startRecognition(() => {
+              if (lastSpeechAt) startedTalking.on = true;
+            });
+            const secs = item.seconds || 60;
+            setDriveStep("Speak", "Speak · " + secs + "s");
+            await timedWait(secs * 1000, {
+              onTick: (remain) => {
+                setDriveStep("Speak", "Speak · " + Math.ceil(remain / 1000) + "s");
+              },
+              shouldEnd: () => {
+                if (!srSupported) return false;
+                if (!startedTalking.on) return false;
+                return lastSpeechAt && (Date.now() - lastSpeechAt > 4000);
+              }
+            });
+            speakEndedAt = Date.now();
+            stopRecognition();
+            const st = srSupported ? computeStats() : null;
+            if (st) drive.sessionStats.push(st);
+            logSession({
+              type: "drive",
+              kind: "drive",
+              duration: st ? st.duration : secs,
+              wpm: st && st.hasSpeech ? st.wpm : 0,
+              fillers: st && st.hasSpeech ? st.fillers : null,
+              words: (st && st.words) || 0,
+              confidence: 0,
+              checks: {},
+              promptId: item.prompt && item.prompt.id
+            });
+            if (LESSONS[currentDayIndex()]) {
+              // don't auto-complete all days; mark current if first drill
+            }
+            setDriveStep("Feedback");
+            if (st && st.hasSpeech) await speakLine(feedbackSpeech(st));
+            else await speakLine("Time's up. Nice work. I couldn't score every word this time, but you finished the drill. The next one is coming.");
+          } else if (item.type === "close") {
+            if (!state.guidedDone) { state.guidedDone = true; }
+            markDayDone(currentDayIndex());
+            setDriveStep("You're done");
+            await speakLine("That's the end of this Drive Mode session. You practiced several start-ups and a breathing exercise. Your progress is saved. Arrive safely, and I'll be ready next time.");
+          }
+        }
+        if (drive) drive.running = false;
+        releaseWakeLock();
+        stopRecognition();
+        stopSpeech();
+        screen = "drive-done";
+        render();
+      };
+
+      go().catch(() => {
+        if (drive) drive.running = false;
+        releaseWakeLock();
+        stopRecognition();
+        stopSpeech();
+        screen = "drive-done";
+        render();
+      });
+    }
+
+    function driveEntry() {
+      const seen = localStorage.getItem(DRIVE_NOTICE_KEY) === "1";
+      if (seen) startDrive();
+      else {
+        screen = "drive-notice";
+        render();
+      }
+    }
+    function startDrive() {
+      try { localStorage.setItem(DRIVE_NOTICE_KEY, "1"); } catch (e) {}
+      stopAllSoft();
+      runDriveSession();
+    }
+    function toggleDrivePause() {
+      if (!drive || !drive.running) return;
+      drive.paused = !drive.paused;
+      if (drive.paused) {
+        if (drive._cancelSpeak) drive._cancelSpeak();
+        try { speechSynthesis.cancel(); } catch (e) {}
+        setDriveStep("Paused");
+      } else {
+        requestWakeLock();
+      }
+      render();
+    }
+    function endDrive() {
+      if (drive) drive.running = false;
+      if (drive && drive._cancelSpeak) drive._cancelSpeak();
+      stopSpeech();
+      stopRecognition();
+      releaseWakeLock();
+      screen = "drive-done";
+      render();
+    }
+
+    function goHome() {
+      stopAllSoft();
+      if (drive) { drive.running = false; releaseWakeLock(); }
+      screen = "home";
+      render();
+    }
+
+    document.getElementById("app").addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-act]");
+      if (!btn) {
+        if (screen === "drive" && drive && drive.running) {
+          e.preventDefault();
+          toggleDrivePause();
+        }
+        return;
+      }
+      const act = btn.getAttribute("data-act");
+      if (act === "dismiss-install") dismissInstall();
+      else if (act === "home") goHome();
+      else if (act === "start") startFromHome();
+      else if (act === "lessons") { screen = "lessons"; render(); }
+      else if (act === "open-lesson") { lessonTrack = "core"; openLesson(Number(btn.getAttribute("data-i"))); }
+      else if (act === "lesson-practice") {
+        if (lessonTrack === "leadership") {
+          const les = LEADERSHIP[lessonIndex];
+          announceOverride = "";
+          practiceKind = (les && les.drill === "afe") ? "afe" : "impromptu";
+          prompt = { title: les.title, text: les.prompt, hint: les.tip };
+          remaining = practiceSecs = practiceSecs || 60;
+          running = false;
+          errorMsg = "";
+          clearRecording();
+          clearLiveStats();
+          reviewChecks = {};
+          reviewConf = 0;
+          prompterOffset = 0;
+          screen = "practice";
+          render();
+        } else {
+          const les = LESSONS[lessonIndex];
+          const kind = les && les.drill ? les.drill : "afe";
+          openPractice(kind, practiceSecs, true);
+        }
+      }
+      else if (act === "practice-pick") { stopAllSoft(); screen = "practice-pick"; render(); }
+      else if (act === "secs") { practiceSecs = Number(btn.getAttribute("data-s")) || 60; render(); }
+      else if (act === "pick-kind") openPractice(btn.getAttribute("data-k"), practiceSecs, false);
+      else if (act === "timer-start") startTimer();
+      else if (act === "timer-stop") finishTimer();
+      else if (act === "record") toggleRecord();
+      else if (act === "play-me") playMe();
+      else if (act === "to-review") goReview();
+      else if (act === "back-practice") { screen = "practice"; render(); }
+      else if (act === "toggle-check") {
+        const c = btn.getAttribute("data-c");
+        reviewChecks[c] = !reviewChecks[c];
+        render();
+      }
+      else if (act === "conf") { reviewConf = Number(btn.getAttribute("data-v")); render(); }
+      else if (act === "save-review") saveReview();
+      else if (act === "script-edit") { scriptDraft = state.myScript || ""; screen = "script"; render(); }
+      else if (act === "save-script") {
+        const box = document.getElementById("script-box");
+        scriptDraft = box ? box.value : scriptDraft;
+        state.myScript = scriptDraft;
+        saveState();
+        render();
+      }
+      else if (act === "practice-script") {
+        const box = document.getElementById("script-box");
+        if (box) { scriptDraft = box.value; state.myScript = scriptDraft; saveState(); }
+        openPractice("myscript", practiceSecs, false);
+      }
+      else if (act === "speed") {
+        const d = Number(btn.getAttribute("data-d")) || 0;
+        state.scrollSpeed = Math.max(12, Math.min(120, (state.scrollSpeed || 40) + d));
+        saveState();
+        const lbl = document.querySelector(".speed-row .lbl");
+        if (lbl) lbl.innerHTML = "Scroll " + state.scrollSpeed + '<span class="en">Speed</span>';
+        else render();
+      }
+      else if (act === "breathe") { stopBreathe(); breathePhase = -1; screen = "breathe"; render(); }
+      else if (act === "breathe-start") startBreathe();
+      else if (act === "breathe-stop") { stopBreathe(); render(); }
+      else if (act === "drive-entry") driveEntry();
+      else if (act === "drive-start") startDrive();
+      else if (act === "drive-toggle") { e.preventDefault(); e.stopPropagation(); toggleDrivePause(); }
+
+      else if (act === "drive-end") { e.stopPropagation(); endDrive(); }
+      else if (act === "leadership") { screen = "leadership"; render(); }
+      else if (act === "open-lead") { lessonTrack = "leadership"; lessonIndex = Number(btn.getAttribute("data-i")); screen = "lesson"; render(); }
+      else if (act === "take-photo") { document.getElementById("evt-camera").click(); }
+      else if (act === "upload-image") { document.getElementById("evt-upload").click(); }
+      else if (act === "looks-good") applyBulletinSave();
+      else if (act === "bulletin-replace") { bulletinReplace = btn.getAttribute("data-v") === "1"; render(); }
+      else if (act === "edit-events") openEventReview();
+      else if (act === "edit-event") openAddForm(btn.getAttribute("data-eid"));
+      else if (act === "add-event-form") openAddForm();
+      else if (act === "add-event") { eventDrafts.push(emptyEvent({ date: todayStr(), source: "manual" })); render(); }
+      else if (act === "delete-event") deleteEventDraft(btn.getAttribute("data-eid"));
+      else if (act === "save-events") saveEventDrafts();
+      else if (act === "save-add") { readAddFormFields(); saveAddForm(); }
+      else if (act === "add-type") { readAddFormFields(); addForm.type = btn.getAttribute("data-v"); render(); }
+      else if (act === "draft-type") {
+        const id = btn.getAttribute("data-eid");
+        const ev = eventDrafts.find((x) => x.id === id);
+        if (ev) ev.type = btn.getAttribute("data-v");
+        render();
+      }
+      else if (act === "reset-script") {
+        const id = btn.getAttribute("data-eid");
+        const ev = eventDrafts.find((x) => x.id === id);
+        if (ev) ev.scriptCustom = "";
+        render();
+      }
+      else if (act === "add-reset-script") { readAddFormFields(); addForm.scriptCustom = ""; render(); }
+      else if (act === "hear-event") { const ev = eventById(btn.getAttribute("data-eid")); if (ev) speakText(getEventScript(ev)); }
+      else if (act === "practice-event") { const ev = eventById(btn.getAttribute("data-eid")); if (ev) practiceAnnouncement(getEventScript(ev)); }
+      else if (act === "hear-all") speakText(dailyAnnouncementScript());
+      else if (act === "practice-all") practiceAnnouncement(dailyAnnouncementScript());
+      else if (act === "share-all") shareText(dailyAnnouncementScript());
+      else if (act === "add-shout") addShoutFromForm();
+      else if (act === "delete-shout") {
+        const id = btn.getAttribute("data-sid");
+        state.shoutouts = (state.shoutouts || []).filter((s) => s.id !== id);
+        saveState();
+        render();
+      }
+      else if (act === "use-prompt") savePersonalTouch(true);
+      else if (act === "save-touch") savePersonalTouch(false);
+      else if (act === "dismiss-bulletin") dismissBulletinBanner();
+    });
+
+    function readAddFormFields() {
+      if (!addForm) return;
+      const g = (id) => { const el = document.getElementById(id); return el ? el.value : ""; };
+      addForm.title = g("add-title");
+      addForm.date = g("add-date") || todayStr();
+      addForm.time = g("add-time");
+      addForm.location = g("add-location");
+      addForm.notes = g("add-notes");
+      addForm.scriptCustom = g("add-script");
+    }
+    function deleteEventDraft(id) {
+      eventDrafts = (eventDrafts || []).filter((e) => e.id !== id);
+      render();
+    }
+
+    document.getElementById("app").addEventListener("input", (e) => {
+      if (!e.target) return;
+      if (e.target.id === "script-box") scriptDraft = e.target.value;
+      const evField = e.target.getAttribute("data-efield");
+      if (evField) {
+        const id = e.target.getAttribute("data-eid");
+        const ev = (eventDrafts || []).find((x) => x.id === id);
+        if (ev) ev[evField] = e.target.value;
+      }
+      if (e.target.id && e.target.id.indexOf("add-") === 0) readAddFormFields();
+      if (e.target.id === "personal-touch") state.personalTouch = e.target.value;
+    });
+
+    function bindFileInputs() {
+      const cam = document.getElementById("evt-camera");
+      const up = document.getElementById("evt-upload");
+      const onFiles = (e) => {
+        const files = e.target.files;
+        e.target.value = "";
+        if (files && files.length) processBulletinFiles(files);
+      };
+      if (cam && !cam._bound) { cam.addEventListener("change", onFiles); cam._bound = true; }
+      if (up && !up._bound) { up.addEventListener("change", onFiles); up._bound = true; }
+    }
+    bindFileInputs();
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible" && screen === "drive" && drive && drive.running && !drive.paused) {
+        requestWakeLock();
+      }
+    });
+
+    function bootFromQuery() {
+      try {
+        const q = new URLSearchParams(location.search);
+        const hash = (location.hash || "").replace(/^#/, "");
+        if (q.get("mode") === "drive" || hash === "drive") {
+          driveEntry();
+          return;
+        }
+      } catch (e) {}
+      render();
+    }
+
+    try { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => {}; } catch (e) {}
+    registerWorker();
+    bootFromQuery();
+
+  
+  </script>
+</body>
+</html>
